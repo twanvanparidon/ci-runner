@@ -12,11 +12,26 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   check:
-    desc: Fail if an image changed since BASE_REF but its version is already published
+    desc: Fail if an image directory changed since BASE_REF but its version is already published
     cmds:
       - for: { var: IMAGES }
         task: check:one
         vars: { FILE: "{{.ITEM}}" }
+
+  lock:
+    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml
+    vars:
+      BUILDER:
+        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' src/builder/images/Dockerfile)"
+    cmds:
+      - task: build:one
+        vars: { FILE: src/builder/images/Dockerfile }
+      - |
+        for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
+          [ -f "$d/aqua.yaml" ] || continue
+          docker run --rm --user "$(id -u):$(id -g)" -e AQUA_ROOT_DIR=/tmp/aqua \
+            -v "{{.ROOT_DIR}}/$d:/work" {{.BUILDER}} aqua update-checksum -prune
+        done
 
   release:
     desc: Build, push and sign every image whose version is not yet in REGISTRY
@@ -30,7 +45,7 @@ tasks:
   build:one:
     internal: true
     vars: &image
-      SCOPE: '{{.FILE | dir | dir}}'
+      SCOPE: '{{.FILE | dir | dir | base}}'
       SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
       NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
       VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
@@ -43,9 +58,9 @@ tasks:
     vars: *image
     cmds:
       - |
-        git diff --quiet {{.BASE_REF}} -- {{.FILE}} && exit 0
+        git diff --quiet {{.BASE_REF}} -- {{.FILE | dir}} && exit 0
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
-          echo "{{.NAME}}: {{.FILE}} changed but {{.VERSION}} is already published; bump ARG VERSION"
+          echo "{{.NAME}}: {{.FILE | dir}} changed but {{.VERSION}} is already published; bump ARG VERSION"
           exit 1
         fi
 

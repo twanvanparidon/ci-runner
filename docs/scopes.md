@@ -1,9 +1,10 @@
 # Adding a scope
 
-1. `cp -r _scope <name>`
-2. Add `<name>/images/<image>.Dockerfile` (see `k8s/images/linter.Dockerfile`): pin the base with `ARG GENERAL_VERSION` and set `ARG VERSION=1.0.0` in the final stage.
-3. Add the Dockerfile to `IMAGES` in `Taskfile.yml`, after its base. It is published as `<name>-<image>`.
-4. Put pipeline examples in `<name>/ci/<provider>/`.
-5. Fill in `<name>/README.md`.
+1. `cp -r src/_scope src/<name>`
+2. Add `src/<name>/images/<image>.Dockerfile` (copy `src/k8s/images/linter.Dockerfile`): pin `ARG BUILDER_VERSION` and `ARG GENERAL_VERSION`, set `ARG VERSION=1.0.0`.
+3. List the tools in `src/<name>/images/aqua.yaml` and run `task images:lock`; `aqua_bootstrap` copies every listed tool into the image.
+4. Add the Dockerfile to `IMAGES` in `Taskfile.yml`, after its base. It is published as `<name>-<image>`.
+5. Put pipeline examples in `src/<name>/ci/<provider>/`.
+6. Fill in `src/<name>/README.md`.
 
-Dockerfiles must be self-contained: the version check only watches the Dockerfile itself.
+The version check watches the whole `src/<name>/images/` directory, so images in one scope bump together.

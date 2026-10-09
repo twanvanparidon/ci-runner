@@ -1,0 +1,13 @@
+# Tools for the images in this directory. Lock with `task images:lock`.
+registries:
+  - type: standard
+    ref: v4.573.1
+checksum:
+  enabled: true
+  require_checksum: true
+  supported_envs:
+    - linux/amd64
+    - linux/arm64
+packages:
+  - name: kubernetes-sigs/kustomize@kustomize/v5.8.3
+  - name: stackrox/kube-linter@v0.8.3

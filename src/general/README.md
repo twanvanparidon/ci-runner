@@ -1,6 +1,6 @@
 # general
 
-Hardened base runner every scope builds on. See [hardening](../docs/hardening.md).
+Hardened base runner every scope builds on. See [hardening](../../docs/hardening.md).
 
 ## Images
 

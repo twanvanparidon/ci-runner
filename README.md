@@ -10,10 +10,11 @@ The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) exten
 
 | Path | Purpose |
 |---|---|
-| `general/` | Hardened base runner: alpine, Task, non-root |
-| `k8s/` | Kubernetes scope: kustomize, kube-linter |
-| `docker/` | Docker scope: hadolint |
-| `_scope/` | Template for a new scope |
+| `src/builder/` | Builder image: aqua + `aqua_bootstrap`, the fetch stage of every image |
+| `src/general/` | Hardened base runner: alpine, Task, non-root |
+| `src/k8s/` | Kubernetes scope: kustomize, kube-linter |
+| `src/docker/` | Docker scope: hadolint |
+| `src/_scope/` | Template for a new scope |
 | `docs/` | Extra documentation |
 
 ## Usage

@@ -6,7 +6,7 @@ includes:
   lcir:
     taskfile: .taskfiles/lcir.yml
     optional: true # host only; skipped inside the container
-    vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0 }
+    vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0@sha256:e597a03c863305ac33a93d9562b1472046df40633cd051cc463c70846cf90491 }
   pipeline: .taskfiles/pipeline.yml
 
 vars:

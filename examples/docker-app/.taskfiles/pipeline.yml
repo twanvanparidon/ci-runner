@@ -5,7 +5,7 @@ version: "3"
 
 vars:
   # Not IMAGE: included Taskfiles share variables, so names must not collide.
-  PIPELINE_IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0
+  PIPELINE_IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0@sha256:e597a03c863305ac33a93d9562b1472046df40633cd051cc463c70846cf90491
 
 tasks:
   default:

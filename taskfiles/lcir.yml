@@ -1,0 +1,47 @@
+# lcir (local ci runner): run CI steps locally, in the image your pipeline uses.
+# Copy to .taskfiles/lcir.yml and include it with the pipeline's image:
+#   includes:
+#     lcir:
+#       taskfile: .taskfiles/lcir.yml
+#       optional: true # host only; the container does not need it
+#       vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:<version> }
+# Then: task lcir                       list the steps
+#       task lcir:<step>                a project task, or ci:<scope>:<task> from the image
+#       task lcir:<step> -- VAR=value   pass variables to the step
+# Mirror a pipeline job with its own image from another task:
+#   - task: lcir:run
+#     vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/k8s:<version>, STEP: ci:k8s:validate }
+# Needs Docker and Task on the host. Runs as your user, at the same path.
+version: "3"
+
+vars:
+  # Docker socket group: 0 on Docker Desktop, the docker group on Linux.
+  DOCKER_GID:
+    sh: stat -Lc %g /var/run/docker.sock 2> /dev/null || stat -Lf %g /var/run/docker.sock 2> /dev/null || echo 0
+
+tasks:
+  # Only this task is listed; the others are hidden to keep `task --list` clean.
+  default:
+    desc: List the CI steps to run locally (task lcir:<step>)
+    cmds:
+      - task: run
+
+  # task lcir:<step> [-- VAR=value]
+  "*":
+    cmds:
+      - task: run
+        vars: { STEP: "{{index .MATCH 0}}" }
+
+  # Run STEP in IMAGE; for pipeline mirrors (task: :lcir:run). No desc keeps it unlisted.
+  run:
+    vars:
+      # Resolved per call, so a caller's IMAGE always wins over the include's.
+      RUN_IMAGE: '{{.IMAGE | default "ghcr.io/twanvanparidon/ci-runner/general:latest"}}'
+    cmds:
+      - >
+        docker run --rm $([ -t 0 ] && [ -t 1 ] && echo -it)
+        {{if hasSuffix ":latest" .RUN_IMAGE}}--pull always{{end}}
+        -v /var/run/docker.sock:/var/run/docker.sock --group-add 0 --group-add {{.DOCKER_GID}}
+        -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" -e HOME=/tmp
+        -e CI_RUNNER_PREFIX="task lcir:"
+        {{.RUN_IMAGE}} ci {{.STEP}} {{.CLI_ARGS}}

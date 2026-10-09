@@ -1,13 +1,10 @@
 version: "3"
 
-vars:
-  BASE_REF: origin/main
-
 tasks:
   build:
-    desc: Build all images locally
+    desc: Build TARGETS (all images, or changed ones with CHANGED_ONLY=true)
     cmds:
-      - for: { var: IMAGES }
+      - for: { var: TARGETS }
         task: build:one
         vars: { FILE: "{{.ITEM}}" }
 

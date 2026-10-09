@@ -4,6 +4,10 @@ vars:
   SYFT: anchore/syft:v1.54.1
   GRYPE: anchore/grype:v0.120.1
   FAIL_ON: high
+  # Shared grype DB volume: downloaded once, refreshed by grype at most daily.
+  GRYPE_DB: ci-runner-grype-db
+  # FULL=true scans even when packages match the published image (nightly).
+  FULL: "false"
 
 tasks:
   sbom:
@@ -16,7 +20,7 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   scan:
-    desc: Scan the SBOMs for vulnerabilities, fail on FAIL_ON or worse
+    desc: Scan SBOMs whose packages differ from the published image, fail on FAIL_ON or worse
     deps: [sbom]
     cmds:
       - for: { var: IMAGES }
@@ -24,7 +28,7 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   scan:published:
-    desc: Scan the published images in REGISTRY
+    desc: Fully scan the published images in REGISTRY
     cmds:
       - mkdir -p sbom
       - for: { var: IMAGES }
@@ -52,9 +56,23 @@ tasks:
     internal: true
     vars: *image
     cmds:
-      - >
-        docker run --rm -i -v "{{.ROOT_DIR}}/.grype.yaml:/grype.yaml:ro"
-        {{.GRYPE}} -c /grype.yaml --fail-on {{.FAIL_ON}} < sbom/{{.NAME}}.syft.json
+      - |
+        {{if ne .FULL "true"}}
+        # Unchanged packages vs the published version: nightly covers new CVEs.
+        if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
+          pkgs='[.artifacts[] | "\(.type) \(.name) \(.version)"] | sort | .[]'
+          published=$(docker run --rm {{.SYFT}} registry:{{.REF}} -q -o syft-json | jq -r "$pkgs")
+          if [ -z "$published" ]; then
+            echo "{{.NAME}}: could not read published SBOM, scanning"
+          elif [ "$published" = "$(jq -r "$pkgs" sbom/{{.NAME}}.syft.json)" ]; then
+            echo "{{.NAME}}: packages match published {{.REF}}, skipping scan"
+            exit 0
+          fi
+        fi
+        {{end}}
+        docker run --rm -i -e GRYPE_DB_CACHE_DIR=/db -v {{.GRYPE_DB}}:/db \
+          -v "{{.ROOT_DIR}}/.grype.yaml:/grype.yaml:ro" \
+          {{.GRYPE}} -c /grype.yaml --fail-on {{.FAIL_ON}} < sbom/{{.NAME}}.syft.json
 
   scan:published:one:
     internal: true
@@ -64,4 +82,4 @@ tasks:
       - task: sbom:one
         vars: { FILE: "{{.FILE}}" }
       - task: scan:one
-        vars: { FILE: "{{.FILE}}" }
+        vars: { FILE: "{{.FILE}}", FULL: "true" }

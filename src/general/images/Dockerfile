@@ -1,4 +1,4 @@
-# Hardened general runner: alpine + task + jq, non-root, nothing else.
+# Hardened general runner: alpine + task + jq + git, non-root, nothing else.
 # Scopes extend this image and add only what they need.
 
 ARG REGISTRY=ci-runner
@@ -11,10 +11,11 @@ COPY images/aqua.yaml images/aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${ALPINE}
-ARG VERSION=1.3.0
+ARG VERSION=1.4.0
 LABEL org.opencontainers.image.version=${VERSION}
 RUN apk upgrade --no-cache \
- && apk add --no-cache ca-certificates \
+ && apk add --no-cache ca-certificates git \
+ && git config --system --add safe.directory '*' \
  && addgroup -g 10001 ci \
  && adduser -D -u 10001 -G ci -s /bin/sh ci \
  && find / -xdev -perm /6000 -type f -exec chmod a-s {} + \

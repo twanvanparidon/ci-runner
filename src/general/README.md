@@ -6,7 +6,7 @@ Hardened base runner every scope builds on. See [hardening](../../docs/hardening
 
 | Image | Adds |
 |---|---|
-| `general` | alpine, ca-certificates, Task, jq |
+| `general` | alpine, ca-certificates, Task, jq, git |
 
 ## Scripts
 

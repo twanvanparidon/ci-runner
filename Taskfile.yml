@@ -1,9 +1,9 @@
 version: "3"
 
 includes:
-  images: .Taskfiles/images.yml
-  security: .Taskfiles/security.yml
-  lint: .Taskfiles/lint.yml
+  images: .taskfiles/images
+  security: .taskfiles/security
+  lint: .taskfiles/lint
 
 vars:
   REGISTRY: ci-runner
@@ -18,7 +18,7 @@ vars:
   # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose Dockerfile, aqua
   # files, scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
   CHANGED_ONLY: "false"
-  SHARED: Taskfile.yml .Taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
+  SHARED: Taskfile.yml .taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
   TARGETS:
     sh: |
       all="{{.IMAGES | trim}}"

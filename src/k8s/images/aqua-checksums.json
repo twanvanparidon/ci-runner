@@ -11,6 +11,16 @@
       "algorithm": "sha256"
     },
     {
+      "id": "github_release/github.com/mikefarah/yq/v4.54.1/yq_linux_amd64",
+      "checksum": "57A5E74AFD5AAFB63C373BE84C37FB778957051AF3F2D1F563AE77DF27B16F0E221CD64A6B7D7729F087FCCBFE7D5B4AA1B42E9004D6C2DF478F160B17392EAD",
+      "algorithm": "sha512"
+    },
+    {
+      "id": "github_release/github.com/mikefarah/yq/v4.54.1/yq_linux_arm64",
+      "checksum": "C11CC3247D6027D62F8D3C46E0B3B9BA3FFDDF9E0201CEC7EDF69C6A4C81C70932F9BE32C1978680121DEA0057D032E63049D65D6565AA472E60B4CD24A44369",
+      "algorithm": "sha512"
+    },
+    {
       "id": "github_release/github.com/stackrox/kube-linter/v0.8.3/kube-linter-linux",
       "checksum": "618D299A3E2839C8CA9D86FCE0DB617BE0FBA41F0FECBBBFB7FBF1C04299FAE1",
       "algorithm": "sha256"

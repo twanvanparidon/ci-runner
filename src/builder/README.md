@@ -6,4 +6,4 @@ Builder image used as the fetch stage of every other image. Not a runner.
 
 | Image | Adds |
 |---|---|
-| `builder` | aqua, `aqua_bootstrap` (installs `./aqua.yaml`, copies all or the named binaries to `/out`) |
+| `builder` | aqua, `aqua_bootstrap` (installs `./aqua.yaml`, copies all or the named binaries plus `./*.sh` scripts to `/out`) |

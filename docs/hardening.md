@@ -6,6 +6,7 @@ Less is more: the base ships only what every job needs. Scopes add the rest.
 - Tools installed with [aqua](https://aquaproj.github.io) in a throwaway `fetch` stage; only the binaries reach the final image.
 - Every download is verified against the committed `aqua-checksums.json` lock (and cosign where the tool signs releases).
 - aqua itself is verified against its pinned checksums file, once, in the `builder` image.
+- Build context allowlisted per scope via `.dockerignore`.
 - Runs as non-root `ci` (uid 10001).
 - setuid/setgid bits stripped; apk cache removed.
 

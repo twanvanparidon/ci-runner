@@ -8,7 +8,7 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG TARGETARCH
 ARG AQUA_VERSION=2.64.0
 ARG AQUA_CHECKSUMS_SHA256=651d4378614e8506c5814d3bed0c5643eea74b957e491601427ad8ebf241fa02
-ARG VERSION=1.1.0
+ARG VERSION=1.2.0
 LABEL org.opencontainers.image.version=${VERSION}
 ENV AQUA_ROOT_DIR=/opt/aqua
 WORKDIR /tmp/aqua
@@ -18,7 +18,7 @@ RUN apk upgrade --no-cache \
  && wget -q "${url}/aqua_linux_${TARGETARCH}.tar.gz" \
  && echo "${AQUA_CHECKSUMS_SHA256}  aqua_${AQUA_VERSION}_checksums.txt" | sha256sum -c - \
  && grep " aqua_linux_${TARGETARCH}.tar.gz$" "aqua_${AQUA_VERSION}_checksums.txt" | sha256sum -c - \
- && tar -xzf "aqua_linux_${TARGETARCH}.tar.gz" -C /usr/local/bin aqua \
+ && tar -xzf "aqua_linux_${TARGETARCH}.tar.gz" --no-same-owner -C /usr/local/bin aqua \
  && rm -rf /tmp/aqua /var/cache/apk/*
-COPY aqua_bootstrap.sh /usr/local/bin/aqua_bootstrap
+COPY scripts/aqua_bootstrap.sh /usr/local/bin/aqua_bootstrap
 WORKDIR /work

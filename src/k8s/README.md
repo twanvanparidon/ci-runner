@@ -6,7 +6,7 @@ Kubernetes manifest building and linting.
 
 | Image | Adds |
 |---|---|
-| `k8s` | kustomize, kube-linter |
+| `k8s` | kustomize, kube-linter, yq |
 
 ## CI
 

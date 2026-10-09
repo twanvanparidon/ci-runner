@@ -2,6 +2,7 @@
 # Install the tools locked in ./aqua.yaml and copy their real binaries
 # (not the aqua-proxy links) to $OUT, default /out.
 # Pass command names to copy only those; default is every command.
+# Scripts in ./*.sh are installed to $OUT without the .sh suffix.
 set -eu
 
 out="${OUT:-/out}"
@@ -15,4 +16,8 @@ if [ "$#" -eq 0 ]; then
 fi
 for cmd in "$@"; do
   cp "$(aqua which "$cmd")" "$out/$cmd"
+done
+for script in ./*.sh; do
+  [ -e "$script" ] || continue
+  install -m 755 "$script" "$out/$(basename "$script" .sh)"
 done

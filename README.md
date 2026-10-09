@@ -13,9 +13,8 @@ Commonly used CI/CD pipelines plus hardened CI images.
 | `images/general/` | Hardened base runner: alpine, Task, jq, git, non-root |
 | `images/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq |
 | `images/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
-| `images/_scope/` | Template for a new scope |
-| `pipelines/` | Steps (`docker.yml`, `k8s.yml`), CI examples and `lcir.yml` to copy into projects |
-| `examples/` | Example projects using both, e.g. `docker-app` |
+| `images/_example/` | Template for a new image |
+| `pipelines/<scope>/<purpose>/` | Taskfile plus GitHub and GitLab examples to copy, e.g. `k8s/lint`, `k8s/gitops` |
 | `docs/` | Extra documentation |
 
 ## Usage
@@ -28,7 +27,7 @@ task lint:dockerfiles # hadolint every image Dockerfile
 task --list           # everything else
 ```
 
-To use the pipelines in a project, and run them locally in the same images, see [Pipelines](docs/pipelines.md).
+To use the pipelines in a project, see [Pipelines](docs/pipelines.md).
 
 ## Docs
 

@@ -14,4 +14,4 @@ CI-only scripts: `scripts/*.sh` are installed on `PATH` without `.sh` (e.g. `scr
 
 ## Pipelines
 
-Steps and CI examples live in [`pipelines/<scope>`](../../pipelines).
+Steps and CI examples live in `pipelines/<scope>/<purpose>/`, see [Pipelines](../../docs/pipelines.md).

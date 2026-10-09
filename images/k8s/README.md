@@ -16,4 +16,5 @@ Kubernetes tooling and GitOps image updates. Validation steps live in [`pipeline
 
 ## Pipelines
 
-Steps (`k8s:validate`: render, kubeconform, kube-linter) and CI examples live in [`pipelines/k8s`](../../pipelines/k8s).
+- [`pipelines/k8s/lint`](../../pipelines/k8s/lint): render, kubeconform, kube-linter
+- [`pipelines/k8s/gitops`](../../pipelines/k8s/gitops): set a new image in a GitOps repo with `gitops_set_image`

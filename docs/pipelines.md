@@ -1,61 +1,44 @@
 # Pipelines
 
-Images ship tools and CI-only scripts (`ci_env`, `gitops_set_image`). Pipeline steps are plain Taskfiles in [`pipelines/`](../pipelines) that you copy into a project. Full example: [`examples/docker-app`](../examples/docker-app).
+Images ship tools and CI-only scripts (`ci_env`, `gitops_set_image`). Pipeline steps are plain Taskfiles in [`pipelines/`](../pipelines), one folder per purpose:
 
-## 1. In CI
+| Pipeline | Image | Run |
+|---|---|---|
+| [`docker/lint`](../pipelines/docker/lint) | docker | `task docker:lint` |
+| [`docker/build`](../pipelines/docker/build) | docker | `task docker:build IMAGE=<name:tag>` |
+| [`k8s/lint`](../pipelines/k8s/lint) | k8s | `task k8s:lint` (or `:render`, `:schema`, `:kube-linter`) |
+| [`k8s/gitops`](../pipelines/k8s/gitops) | k8s | `task k8s:gitops DIR=… OVERLAY=… IMAGES=…` |
 
-Copy the steps you need to `.taskfiles/` and include them; add your own tasks next to them:
+Each folder has a `Taskfile.yml` plus `github.yml` and `gitlab-ci.yml` examples.
+
+## Using a pipeline
+
+Copy the `Taskfile.yml` to `.taskfiles/<scope>/<purpose>/Taskfile.yml` and include it under the same path as namespace; add your own tasks next to it:
 
 ```yaml
 # Taskfile.yml
 version: "3"
 includes:
-  docker: .taskfiles/docker.yml    # copy of pipelines/docker/docker.yml
+  docker:lint: .taskfiles/docker/lint
+  k8s:lint: .taskfiles/k8s/lint
 tasks:
   smoke:
     cmds: [docker run --rm myapp:dev]
 ```
 
-Run the tasks in a ci-runner image:
+Then copy the matching CI example. Every step is `task <name>` in a ci-runner image.
 
-```yaml
-lint:
-  image: ghcr.io/twanvanparidon/ci-runner/docker:<version>
-  script: [task docker:lint]
-```
+## Locally
 
-Ready-made pipelines: [`pipelines/k8s/github`](../pipelines/k8s/github), [`pipelines/k8s/gitlab`](../pipelines/k8s/gitlab).
-
-## 2. Locally
-
-Copy [`pipelines/lcir.yml`](../pipelines/lcir.yml) (local ci runner) to `.taskfiles/lcir.yml` and include it with the pipeline's image:
-
-```yaml
-includes:
-  lcir:
-    taskfile: .taskfiles/lcir.yml
-    optional: true # host only; the container does not need it
-    vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:<version> }
-```
+Run the same tasks with the tools installed, or in the CI image:
 
 ```sh
-task lcir:docker:lint                         # a task, in the CI image
-task lcir:docker:lint -- DOCKERFILES=Dockerfile
+docker run --rm -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" \
+  ghcr.io/twanvanparidon/ci-runner/k8s:<version> task k8s:lint
 ```
 
-It mounts the git repository root at the same path, runs from the current directory as your user and passes the Docker socket. Needs Docker and Task.
+## Conventions
 
-## 3. Advanced: mirror the whole pipeline
-
-`lcir:run` runs any task in any image, so a pipeline with several jobs and images can be mirrored, see [`pipeline.yml`](../examples/docker-app/.taskfiles/pipeline.yml):
-
-```yaml
-lint:
-  cmds:
-    - task: :lcir:run
-      vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:<version>, STEP: docker:lint }
-```
-
-Include it as `pipeline` and run `task pipeline` or `task pipeline:<job>`.
-
-Variables in included Taskfiles are shared, so keep them per task or give them unique names.
+- `.taskfiles/<path>/Taskfile.yml`, included as `<path>` with `:` between folders.
+- Each pipeline's main step is its `default` task, so `task <path>` runs it.
+- Variables live per task: included Taskfiles share file-level variables, so they would collide.

@@ -12,4 +12,5 @@ No daemon is included: point buildx at a builder, see [builders](../../docs/buil
 
 ## Pipelines
 
-Steps and CI examples live in [`pipelines/docker`](../../pipelines/docker).
+- [`pipelines/docker/lint`](../../pipelines/docker/lint): hadolint every Dockerfile
+- [`pipelines/docker/build`](../../pipelines/docker/build): build with buildx

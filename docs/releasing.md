@@ -5,7 +5,7 @@ Each image is versioned on its own via `ARG VERSION` in its Dockerfile.
 ## Flow
 
 1. Change an image and bump its `ARG VERSION` (semver).
-2. PR: `task images:check` fails if a Dockerfile changed but its version is already published. `task security:scan` must pass.
+2. PR: `task images:check` fails if an image directory changed but its version is already published. `task security:scan` must pass.
 3. Merge to main: `task images:release` builds, pushes and signs every image whose version is missing from the registry. Published versions are never overwritten.
 
 ## Tags
@@ -20,8 +20,8 @@ Git tag `<image>/v<version>` marks the released commit.
 
 ## Dependent images
 
-Scopes pin their base exactly (`ARG GENERAL_VERSION` in `k8s/images/linter.Dockerfile`).
-Bumping `general` means bumping the pin, which forces a version bump of the dependent image too.
+Images pin their dependencies exactly (`ARG BUILDER_VERSION`, `ARG GENERAL_VERSION`).
+Bumping `builder` or `general` means bumping the pin, which forces a version bump of the dependent image too.
 
 ## Supply chain
 

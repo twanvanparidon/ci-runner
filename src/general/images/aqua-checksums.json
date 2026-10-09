@@ -1,0 +1,19 @@
+{
+  "checksums": [
+    {
+      "id": "github_release/github.com/go-task/task/v3.54.0/task_linux_amd64.tar.gz",
+      "checksum": "680859DBB4D881A9C72D4D9A8F510825450849AF8567DEACD7302C01124416FB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/go-task/task/v3.54.0/task_linux_arm64.tar.gz",
+      "checksum": "D7189D439D4A6058E39E1B2ACD7C8B27ACD4856691B408F23B242E4294E1DF5B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.573.1/registry.yaml",
+      "checksum": "7F95A2779ECA5740BF20BA529680C6DC7CA280811334A819A2D7870F41BFEFC5",
+      "algorithm": "sha256"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ tasks:
     deps: [":images:build"]
     vars:
       LINTER:
-        sh: echo "{{.REGISTRY}}/docker-linter:$(sed -n 's/^ARG VERSION=//p' docker/images/linter.Dockerfile)"
+        sh: echo "{{.REGISTRY}}/docker-linter:$(sed -n 's/^ARG VERSION=//p' src/docker/images/linter.Dockerfile)"
     cmds:
       - |
         set -o pipefail

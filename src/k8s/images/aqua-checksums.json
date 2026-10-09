@@ -1,0 +1,29 @@
+{
+  "checksums": [
+    {
+      "id": "github_release/github.com/kubernetes-sigs/kustomize/kustomize/v5.8.3/kustomize_v5.8.3_linux_amd64.tar.gz",
+      "checksum": "CB9E31198D3F63B44848BD0AFC4C8EFC56E6CFEF9C93A4A39A211940E6DECD61",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/kubernetes-sigs/kustomize/kustomize/v5.8.3/kustomize_v5.8.3_linux_arm64.tar.gz",
+      "checksum": "9867B76482CFC6D25B546ABC1D2B5A32BD137505ABA640649B4B378F64F6D68F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/stackrox/kube-linter/v0.8.3/kube-linter-linux",
+      "checksum": "618D299A3E2839C8CA9D86FCE0DB617BE0FBA41F0FECBBBFB7FBF1C04299FAE1",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/stackrox/kube-linter/v0.8.3/kube-linter-linux_arm64",
+      "checksum": "9C39D35252E0DCAFB16B26197B9E93BA578E44EB402C3C6660FC94E08F94094F",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.573.1/registry.yaml",
+      "checksum": "7F95A2779ECA5740BF20BA529680C6DC7CA280811334A819A2D7870F41BFEFC5",
+      "algorithm": "sha256"
+    }
+  ]
+}

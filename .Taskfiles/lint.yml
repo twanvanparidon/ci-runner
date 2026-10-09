@@ -12,6 +12,7 @@ tasks:
         set -o pipefail
         rc=0
         for f in {{.IMAGES | trim}}; do
-          docker run --rm -i {{.LINTER}} hadolint --no-color - < "$f" | sed "s|^-:|$f:|" || rc=1
+          docker run --rm -i -v "{{.ROOT_DIR}}/.hadolint.yaml:/.hadolint.yaml:ro" {{.LINTER}} \
+            hadolint --no-color --config /.hadolint.yaml - < "$f" | sed "s|^-:|$f:|" || rc=1
         done
         exit $rc

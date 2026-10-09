@@ -1,0 +1,4 @@
+ignored:
+  # Alpine drops old package versions, so pins break builds. The base is
+  # digest pinned and apk upgrade pulls in patches on purpose.
+  - DL3018

@@ -34,7 +34,7 @@ tasks:
         done
 
   release:
-    desc: Build, push and sign every image whose version is not yet in REGISTRY
+    desc: Build, push, sign and tag every image version missing from REGISTRY; finishes half-done releases
     cmds:
       - for: { var: IMAGES }
         task: release:one
@@ -69,17 +69,30 @@ tasks:
     vars: *image
     cmds:
       - |
+        tag="{{.NAME}}/v{{.VERSION}}"
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
-          echo "{{.REF}} already published, skipping"; exit 0
+          # Already published: finish a release that stopped halfway (unsigned or untagged).
+          ref="{{.REGISTRY}}/{{.NAME}}@$(docker buildx imagetools inspect {{.REF}} | sed -n 's/^Digest: *//p' | head -1)"
+          if cosign verify "$ref" --certificate-identity-regexp '.*' --certificate-oidc-issuer-regexp '.*' > /dev/null 2>&1; then
+            echo "{{.REF}} already published and signed"
+          else
+            echo "{{.REF}} published but unsigned, signing"
+            cosign sign --yes "$ref"
+          fi
+        else
+          meta=$(mktemp)
+          docker buildx build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} \
+            --platform linux/amd64,linux/arm64 --sbom=true --provenance=mode=max \
+            -t {{.REF}} \
+            -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
+            -t {{.REGISTRY}}/{{.NAME}}:latest \
+            -t "{{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD)" \
+            --metadata-file "$meta" --push {{.FILE | dir | dir}}
+          cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
         fi
-        meta=$(mktemp)
-        docker buildx build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} \
-          --platform linux/amd64,linux/arm64 --sbom=true --provenance=mode=max \
-          -t {{.REF}} \
-          -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
-          -t {{.REGISTRY}}/{{.NAME}}:latest \
-          -t {{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD) \
-          --metadata-file "$meta" --push {{.FILE | dir | dir}}
-        cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
-        git tag {{.NAME}}/v{{.VERSION}}
-        git push origin {{.NAME}}/v{{.VERSION}}
+        if git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+          echo "git tag $tag exists"
+        else
+          git tag "$tag"
+          git push origin "$tag"
+        fi

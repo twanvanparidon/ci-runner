@@ -4,10 +4,10 @@ on:
   pull_request:
     # Only what feeds an image; docs, READMEs and ci/ examples never trigger it.
     paths:
-      - "src/*/images/**"
-      - "src/*/scripts/**"
-      - "src/*/tasks.yml"
-      - "src/*/.dockerignore"
+      - "images/*/images/**"
+      - "images/*/scripts/**"
+      - "images/*/tasks.yml"
+      - "images/*/.dockerignore"
       - "Taskfile.yml"
       - ".Taskfiles/**"
       - ".grype.yaml"
@@ -16,10 +16,10 @@ on:
   push:
     branches: [main]
     paths:
-      - "src/*/images/**"
-      - "src/*/scripts/**"
-      - "src/*/tasks.yml"
-      - "src/*/.dockerignore"
+      - "images/*/images/**"
+      - "images/*/scripts/**"
+      - "images/*/tasks.yml"
+      - "images/*/.dockerignore"
       - "Taskfile.yml"
       - ".Taskfiles/**"
       - ".grype.yaml"

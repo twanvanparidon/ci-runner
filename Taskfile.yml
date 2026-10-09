@@ -8,12 +8,12 @@ includes:
 vars:
   REGISTRY: ci-runner
   # Build order matters: base images first.
-  # src/<scope>/images/Dockerfile is image <scope>, src/<scope>/images/<name>.Dockerfile is <scope>-<name>.
+  # images/<scope>/images/Dockerfile is image <scope>, images/<scope>/images/<name>.Dockerfile is <scope>-<name>.
   IMAGES: >
-    src/builder/images/Dockerfile
-    src/general/images/Dockerfile
-    src/k8s/images/Dockerfile
-    src/docker/images/Dockerfile
+    images/builder/images/Dockerfile
+    images/general/images/Dockerfile
+    images/k8s/images/Dockerfile
+    images/docker/images/Dockerfile
   BASE_REF: origin/main
   # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose images/,
   # scripts/, tasks.yml or .dockerignore changed since BASE_REF (CI). Shared files select all.

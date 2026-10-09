@@ -60,7 +60,7 @@ Include it as `pipeline` and run `task pipeline` (or `task pipeline:<job>`). Tas
 
 ## Shipping tasks in a scope
 
-Add `src/<scope>/tasks.yml` and copy it in the final stage of the scope's Dockerfile:
+Add `images/<scope>/tasks.yml` and copy it in the final stage of the scope's Dockerfile:
 
 ```dockerfile
 COPY tasks.yml /usr/local/share/ci-runner/<scope>.yml

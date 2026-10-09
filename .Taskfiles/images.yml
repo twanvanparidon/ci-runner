@@ -19,10 +19,10 @@ tasks:
     desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml
     vars:
       BUILDER:
-        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' src/builder/images/Dockerfile)"
+        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/images/Dockerfile)"
     cmds:
       - task: build:one
-        vars: { FILE: src/builder/images/Dockerfile }
+        vars: { FILE: images/builder/images/Dockerfile }
       - |
         for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
           [ -f "$d/aqua.yaml" ] || continue

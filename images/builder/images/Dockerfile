@@ -8,7 +8,7 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG TARGETARCH
 ARG AQUA_VERSION=2.64.0
 ARG AQUA_CHECKSUMS_SHA256=651d4378614e8506c5814d3bed0c5643eea74b957e491601427ad8ebf241fa02
-ARG VERSION=1.2.0
+ARG VERSION=1.2.1
 LABEL org.opencontainers.image.version=${VERSION}
 ENV AQUA_ROOT_DIR=/opt/aqua
 WORKDIR /tmp/aqua

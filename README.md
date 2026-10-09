@@ -31,13 +31,9 @@ To use the pipelines in a project, see [Pipelines](docs/pipelines.md).
 
 ## Docs
 
-- [Hardening](docs/hardening.md)
-- [SBOM](docs/sbom.md)
-- [Releasing](docs/releasing.md)
-- [Builders](docs/builders.md)
-- [Adding a scope](docs/scopes.md)
-- [CI env](docs/ci-env.md)
-- [Pipelines](docs/pipelines.md)
+Images: [Hardening](docs/hardening.md), [SBOM](docs/sbom.md), [Releasing](docs/releasing.md), [Builders](docs/builders.md), [Adding a scope](docs/scopes.md)
+
+Pipelines: [Pipelines](docs/pipelines.md), [CI env](docs/ci-env.md)
 
 ## License
 

@@ -7,14 +7,14 @@ Less is more: the base ships only what every job needs. Scopes add the rest.
 - Every download is verified against the committed `aqua-checksums.json` lock (and cosign where the tool signs releases).
 - aqua itself is verified against its pinned checksums file, once, in the `builder` image.
 - Build context allowlisted per scope via `.dockerignore`.
-- Runs as non-root `ci` (uid 10001).
+- Runner images run as non-root `ci` (uid 10001); only the `builder` stage runs as root.
 - git trusts every directory (`safe.directory = *`): checkouts are owned by another user (GitLab clones as root, a local `docker run` mounts yours) and a CI container has no other users to guard against.
 - setuid/setgid bits stripped; apk cache removed.
 
 ## Gotchas
 
-- GitHub Actions `container:` jobs may need `options: --user root` because the workspace is root owned.
-- To install packages in a scope, switch to `USER root` and back to `USER 10001:10001`.
+- GitHub Actions `container:` jobs: use `options: --user 1001`, the runner's user, which owns the workspace.
+- To install packages in a scope, switch to `USER 0` and back to `USER 10001:10001` (numeric, so hadolint is happy).
 
 ## Bumping versions
 

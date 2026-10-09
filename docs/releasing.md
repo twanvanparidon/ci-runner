@@ -5,7 +5,7 @@ Each image is versioned on its own via `ARG VERSION` in its Dockerfile.
 ## Flow
 
 1. Change an image and bump its `ARG VERSION` (semver).
-2. PR: `task images:check` fails if an image directory changed but its version is already published. `task security:scan` must pass.
+2. PR: `task images:check` fails if an image changed (Dockerfile, aqua files, `scripts/`, `.dockerignore`) but its version is already published. `task security:scan` must pass.
 3. Merge to main: `task images:release` builds, pushes and signs every image whose version is missing from the registry. Published versions are never overwritten. A rerun finishes a release that stopped halfway (signs and tags an already pushed version).
 
 CI only runs when image files change, and only builds, lints and scans the images whose Dockerfile, aqua files, `scripts/` or `.dockerignore` changed (all images when shared files like Taskfiles or `.grype.yaml` change). Locally every task covers all images; add `CHANGED_ONLY=true` to narrow it.

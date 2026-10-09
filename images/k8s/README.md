@@ -1,6 +1,6 @@
 # k8s
 
-Kubernetes tooling and GitOps image updates. Validation steps live in [`pipelines/k8s`](../../pipelines/k8s).
+Kubernetes tooling and GitOps image updates.
 
 ## Images
 

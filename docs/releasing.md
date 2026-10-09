@@ -6,7 +6,7 @@ Each image is versioned on its own via `ARG VERSION` in its Dockerfile.
 
 1. Change an image and bump its `ARG VERSION` (semver).
 2. PR: `task images:check` fails if an image directory changed but its version is already published. `task security:scan` must pass.
-3. Merge to main: `task images:release` builds, pushes and signs every image whose version is missing from the registry. Published versions are never overwritten.
+3. Merge to main: `task images:release` builds, pushes and signs every image whose version is missing from the registry. Published versions are never overwritten. A rerun finishes a release that stopped halfway (signs and tags an already pushed version).
 
 ## Tags
 

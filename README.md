@@ -2,9 +2,8 @@
 
 Commonly used CI/CD pipelines plus hardened CI images.
 
-Images are published to `ghcr.io/twanvanparidon/ci-runner/<image>`.
-Pipelines run [Task](https://taskfile.dev), so the CI provider only calls `task <name>`.
-The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) extends it with only the tools it needs.
+- **Images** (`images/`): a minimal, hardened `general` runner, extended per scope (e.g. `k8s`) with only the tools it needs. Published to `ghcr.io/twanvanparidon/ci-runner/<image>`.
+- **Pipelines** (`pipelines/`): plain [Task](https://taskfile.dev) steps and CI examples to copy into projects, so the CI provider only calls `task <name>`.
 
 ## Layout
 
@@ -15,8 +14,8 @@ The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) exten
 | `images/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq |
 | `images/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
 | `images/_scope/` | Template for a new scope |
-| `taskfiles/` | Taskfiles for projects to copy, e.g. `lcir.yml` |
-| `examples/` | Example projects using the images, e.g. `docker-app` |
+| `pipelines/` | Steps (`docker.yml`, `k8s.yml`), CI examples and `lcir.yml` to copy into projects |
+| `examples/` | Example projects using both, e.g. `docker-app` |
 | `docs/` | Extra documentation |
 
 ## Usage
@@ -29,7 +28,7 @@ task lint:dockerfiles # hadolint every image Dockerfile
 task --list           # everything else
 ```
 
-To run CI steps locally in the same images, include [`taskfiles/lcir.yml`](taskfiles/lcir.yml), see [ci](docs/ci.md).
+To use the pipelines in a project, and run them locally in the same images, see [Pipelines](docs/pipelines.md).
 
 ## Docs
 
@@ -39,7 +38,7 @@ To run CI steps locally in the same images, include [`taskfiles/lcir.yml`](taskf
 - [Builders](docs/builders.md)
 - [Adding a scope](docs/scopes.md)
 - [CI env](docs/ci-env.md)
-- [ci tasks](docs/ci.md)
+- [Pipelines](docs/pipelines.md)
 
 ## License
 

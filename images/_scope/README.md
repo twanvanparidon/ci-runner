@@ -10,8 +10,8 @@ One line on what this scope is for.
 
 ## Scripts
 
-`scripts/*.sh` are installed on `PATH` without `.sh` (e.g. `scripts/foo.sh` runs as `foo`).
+CI-only scripts: `scripts/*.sh` are installed on `PATH` without `.sh` (e.g. `scripts/foo.sh` runs as `foo`).
 
-## CI
+## Pipelines
 
-Pipeline examples per provider in `ci/<provider>/`.
+Steps and CI examples live in [`pipelines/<scope>`](../../pipelines).

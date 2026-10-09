@@ -10,6 +10,6 @@ Building, linting, signing and scanning images.
 
 No daemon is included: point buildx at a builder, see [builders](../../docs/builders.md).
 
-## CI
+## Pipelines
 
-Pipeline examples per provider in `ci/<provider>/`.
+Steps and CI examples live in [`pipelines/docker`](../../pipelines/docker).

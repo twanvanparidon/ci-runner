@@ -14,6 +14,6 @@ Hardened base runner every scope builds on. See [hardening](../../docs/hardening
 |---|---|
 | `ci_env` | Provider agnostic CI variables: `eval "$(ci_env)"`. See [CI env](../../docs/ci-env.md). |
 
-## CI
+## Pipelines
 
-Pipeline examples per provider in `ci/<provider>/`.
+`general` runs any [pipeline](../../docs/pipelines.md); scope images add tools for theirs.

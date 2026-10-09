@@ -9,7 +9,7 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   check:
-    desc: Fail if an image, its scripts or .dockerignore changed since BASE_REF but its version is already published
+    desc: Fail if an image Dockerfile, aqua files, scripts or .dockerignore changed since BASE_REF but its version is already published
     cmds:
       - for: { var: IMAGES }
         task: check:one
@@ -19,10 +19,10 @@ tasks:
     desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml
     vars:
       BUILDER:
-        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/images/Dockerfile)"
+        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/Dockerfile)"
     cmds:
       - task: build:one
-        vars: { FILE: images/builder/images/Dockerfile }
+        vars: { FILE: images/builder/Dockerfile }
       - |
         for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
           [ -f "$d/aqua.yaml" ] || continue
@@ -42,22 +42,22 @@ tasks:
   build:one:
     internal: true
     vars: &image
-      SCOPE: '{{.FILE | dir | dir | base}}'
+      SCOPE: '{{.FILE | dir | base}}'
       SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
       NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
       VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
       REF: "{{.REGISTRY}}/{{.NAME}}:{{.VERSION}}"
     cmds:
-      - docker build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} {{.FILE | dir | dir}}
+      - docker build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} {{.FILE | dir}}
 
   check:one:
     internal: true
     vars: *image
     cmds:
       - |
-        git diff --quiet {{.BASE_REF}} -- {{.FILE | dir}} {{.FILE | dir | dir}}/scripts {{.FILE | dir | dir}}/.dockerignore && exit 0
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
-          echo "{{.NAME}}: {{.FILE | dir}}, scripts or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
+          echo "{{.NAME}}: Dockerfile, aqua files, scripts or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
           exit 1
         fi
 
@@ -84,7 +84,7 @@ tasks:
             -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
             -t {{.REGISTRY}}/{{.NAME}}:latest \
             -t "{{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD)" \
-            --metadata-file "$meta" --push {{.FILE | dir | dir}}
+            --metadata-file "$meta" --push {{.FILE | dir}}
           cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
         fi
         if git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then

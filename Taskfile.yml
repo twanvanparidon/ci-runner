@@ -8,15 +8,15 @@ includes:
 vars:
   REGISTRY: ci-runner
   # Build order matters: base images first.
-  # images/<scope>/images/Dockerfile is image <scope>, images/<scope>/images/<name>.Dockerfile is <scope>-<name>.
+  # images/<scope>/Dockerfile is image <scope>, images/<scope>/<name>.Dockerfile is <scope>-<name>.
   IMAGES: >
-    images/builder/images/Dockerfile
-    images/general/images/Dockerfile
-    images/k8s/images/Dockerfile
-    images/docker/images/Dockerfile
+    images/builder/Dockerfile
+    images/general/Dockerfile
+    images/k8s/Dockerfile
+    images/docker/Dockerfile
   BASE_REF: origin/main
-  # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose images/,
-  # scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
+  # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose Dockerfile, aqua
+  # files, scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
   CHANGED_ONLY: "false"
   SHARED: Taskfile.yml .Taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
   TARGETS:
@@ -28,6 +28,6 @@ vars:
         echo "$all"; exit 0
       fi
       for f in $all; do
-        scope=$(dirname "$(dirname "$f")")
-        git diff --quiet "{{.BASE_REF}}" -- "$scope/images" "$scope/scripts" "$scope/.dockerignore" || echo "$f"
+        scope=$(dirname "$f")
+        git diff --quiet "{{.BASE_REF}}" -- "$f" "$scope"/aqua* "$scope/scripts" "$scope/.dockerignore" || echo "$f"
       done

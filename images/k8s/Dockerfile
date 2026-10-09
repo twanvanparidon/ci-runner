@@ -6,7 +6,7 @@ ARG GENERAL_VERSION=1.4.0
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
 # scripts* is optional: a scope without scripts still builds.
-COPY images/aqua.yaml images/aqua-checksums.json scripts* /work/
+COPY aqua.yaml aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${REGISTRY}/general:${GENERAL_VERSION}

@@ -7,7 +7,7 @@ ARG ALPINE=alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
 # scripts* is optional: a scope without scripts still builds.
-COPY images/aqua.yaml images/aqua-checksums.json scripts* /work/
+COPY aqua.yaml aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${ALPINE}

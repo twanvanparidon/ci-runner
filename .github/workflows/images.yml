@@ -4,7 +4,9 @@ on:
   pull_request:
     # Only what feeds an image; docs, READMEs and ci/ examples never trigger it.
     paths:
-      - "images/*/images/**"
+      - "images/*/Dockerfile"
+      - "images/*/*.Dockerfile"
+      - "images/*/aqua*"
       - "images/*/scripts/**"
       - "images/*/.dockerignore"
       - "Taskfile.yml"
@@ -15,7 +17,9 @@ on:
   push:
     branches: [main]
     paths:
-      - "images/*/images/**"
+      - "images/*/Dockerfile"
+      - "images/*/*.Dockerfile"
+      - "images/*/aqua*"
       - "images/*/scripts/**"
       - "images/*/.dockerignore"
       - "Taskfile.yml"

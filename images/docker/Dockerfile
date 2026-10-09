@@ -7,7 +7,7 @@ ARG GENERAL_VERSION=1.4.0
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
 # scripts* is optional: a scope without scripts still builds.
-COPY images/aqua.yaml images/aqua-checksums.json scripts* /work/
+COPY aqua.yaml aqua-checksums.json scripts* /work/
 # The docker package also ships dockerd and containerd; keep only the CLI.
 RUN aqua_bootstrap docker docker-cli-plugin-docker-buildx hadolint cosign syft grype \
  && mkdir /plugins \

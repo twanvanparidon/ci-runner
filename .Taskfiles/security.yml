@@ -40,7 +40,7 @@ tasks:
   sbom:one:
     internal: true
     vars: &image
-      SCOPE: '{{.FILE | dir | dir | base}}'
+      SCOPE: '{{.FILE | dir | base}}'
       SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
       NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
       VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }

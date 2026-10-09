@@ -23,6 +23,8 @@ kubeconform -strict -summary rendered  # schemas; CRDs need -ignore-missing-sche
 kube-linter lint rendered              # best practices
 ```
 
+The examples pass `$K8S_DIR/.kube-linter.yaml` to kube-linter when it exists (override with `KUBE_LINTER_CONFIG`); kube-linter only auto-loads it from the working directory.
+
 ## CI
 
 | Example | Does |

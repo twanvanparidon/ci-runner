@@ -1,18 +1,19 @@
-# Kubernetes steps. Copy to .taskfiles/k8s.yml and include it as `k8s`.
-# Runs in the ci-runner k8s image (kustomize, kubeconform, kube-linter).
+# Validate kustomize manifests: render, schema check and lint what gets deployed.
+# Image: ci-runner k8s. Copy to .taskfiles/k8s/lint/Taskfile.yml, include as `k8s:lint`,
+# run `task k8s:lint` (all) or one step: k8s:lint:render, :schema, :kube-linter.
 # K8S_DIR (default k8s) holds the kustomizations, OUT (default rendered) the output.
 # Variables are per task: included Taskfiles share file-level vars.
 version: "3"
 
 tasks:
-  validate:
+  default:
     desc: Render, schema check and lint
     cmds:
-      - task: build
+      - task: render
       - task: schema
-      - task: lint
+      - task: kube-linter
 
-  build:
+  render:
     desc: Render every kustomization under K8S_DIR to OUT; components are skipped
     vars:
       K8S_DIR: '{{.K8S_DIR | default "k8s"}}'
@@ -48,7 +49,7 @@ tasks:
         -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{"{{"}}.Group{{"}}"}}/{{"{{"}}.ResourceKind{{"}}"}}_{{"{{"}}.ResourceAPIVersion{{"}}"}}.json'
         "{{.OUT}}"
 
-  lint:
+  kube-linter:
     desc: kube-linter on OUT, with K8S_DIR/.kube-linter.yaml when present
     vars:
       K8S_DIR: '{{.K8S_DIR | default "k8s"}}'

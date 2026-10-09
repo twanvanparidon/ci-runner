@@ -1,0 +1,16 @@
+# Build the image. Add to .gitlab-ci.yml. Needs pipelines/docker/build/Taskfile.yml
+# copied to .taskfiles/docker/build/Taskfile.yml and included as `docker:build`.
+# Builds on a docker-in-docker service (see docs/builders.md for other builders).
+
+docker-build:
+  image: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0@sha256:e597a03c863305ac33a93d9562b1472046df40633cd051cc463c70846cf90491
+  services:
+    - docker:29-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: /certs/client
+  script:
+    - eval "$(ci_env)" # same CI_* variables as on GitHub
+    - task docker:build IMAGE="$CI_REGISTRY_IMAGE:$CI_SHORT_SHA"

@@ -1,10 +1,10 @@
 # Validate kustomize manifests: render every overlay, then schema check and lint
 # exactly what gets deployed. CI only, no deploy (GitOps does that).
 #
-# Use: copy to .github/workflows/k8s-validate.yml, with pipelines/k8s/k8s.yml copied
-# to .taskfiles/k8s.yml and included as `k8s` in the project's Taskfile.yml.
+# Copy to .github/workflows/k8s-lint.yml. Needs pipelines/k8s/lint/Taskfile.yml copied to
+# .taskfiles/k8s/lint/Taskfile.yml and included as `k8s:lint`.
 
-name: k8s-validate
+name: k8s-lint
 
 on:
   pull_request:
@@ -26,6 +26,6 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - run: task k8s:build
-      - run: task k8s:schema
-      - run: task k8s:lint
+      - run: task k8s:lint:render
+      - run: task k8s:lint:schema
+      - run: task k8s:lint:kube-linter

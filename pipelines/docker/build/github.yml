@@ -1,0 +1,27 @@
+# Build the image. Copy to .github/workflows/docker-build.yml. Needs
+# pipelines/docker/build/Taskfile.yml copied to .taskfiles/docker/build/Taskfile.yml
+# and included as `docker:build`. Builds on the runner's Docker, which GitHub
+# mounts into container jobs; the socket's group may need --group-add.
+
+name: docker-build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0@sha256:e597a03c863305ac33a93d9562b1472046df40633cd051cc463c70846cf90491
+      options: --user 1001 # the runner user, owns the workspace
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # ci_env gives the same CI_* variables on GitHub and GitLab.
+      - run: |
+          eval "$(ci_env)"
+          task docker:build IMAGE="$CI_REGISTRY_IMAGE:$CI_SHORT_SHA"

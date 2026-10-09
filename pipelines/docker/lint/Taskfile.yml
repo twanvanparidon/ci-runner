@@ -1,0 +1,17 @@
+# Lint Dockerfiles with hadolint. Image: ci-runner docker.
+# Copy to .taskfiles/docker/lint/Taskfile.yml, include as `docker:lint`, run `task docker:lint`.
+version: "3"
+
+tasks:
+  default:
+    desc: hadolint every Dockerfile (or DOCKERFILES), fail after checking all
+    cmds:
+      - |
+        files="{{.DOCKERFILES}}"
+        [ -n "$files" ] || files="$(find . \( -name Dockerfile -o -name '*.Dockerfile' \) -not -path './.git/*' | sort)"
+        rc=0
+        for f in $files; do
+          echo "== $f"
+          hadolint "$f" || rc=1
+        done
+        exit $rc

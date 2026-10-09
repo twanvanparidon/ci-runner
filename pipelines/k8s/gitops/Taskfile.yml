@@ -1,0 +1,15 @@
+# Set a new image in a GitOps repo overlay, commit and push. Image: ci-runner k8s.
+# DIR is a checkout of the GitOps repo with push access; the pipeline provides the credentials.
+# Copy to .taskfiles/k8s/gitops/Taskfile.yml, include as `k8s:gitops`, run e.g.
+#   task k8s:gitops DIR=gitops OVERLAY=apps/web/overlays/prod IMAGES="web=ghcr.io/me/web:1.2.3"
+# Env: BRANCH (default: the checkout's branch), PUSH=false to only commit.
+version: "3"
+
+tasks:
+  default:
+    desc: Set IMAGES (kustomize edit set image syntax) in OVERLAY of DIR, commit and push
+    requires:
+      vars: [OVERLAY, IMAGES]
+    dir: '{{.DIR | default "."}}'
+    cmds:
+      - gitops_set_image {{.OVERLAY}} {{.IMAGES}}

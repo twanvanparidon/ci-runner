@@ -1,8 +1,8 @@
 # Validate kustomize manifests: render every overlay, then schema check and lint
 # exactly what gets deployed. CI only, no deploy (GitOps does that).
 #
-# Use: copy into .gitlab-ci.yml, with pipelines/k8s/k8s.yml copied to
-# .taskfiles/k8s.yml and included as `k8s` in the project's Taskfile.yml.
+# Add to .gitlab-ci.yml. Needs pipelines/k8s/lint/Taskfile.yml copied to
+# .taskfiles/k8s/lint/Taskfile.yml and included as `k8s:lint`.
 
 variables:
   K8S_DIR: k8s # directory with apps/, infrastructure/, ...
@@ -25,7 +25,7 @@ workflow:
 
 k8s-build:
   extends: .k8s
-  script: [task k8s:build]
+  script: [task k8s:lint:render]
   artifacts:
     paths: [rendered/]
     expire_in: 1 day
@@ -33,9 +33,9 @@ k8s-build:
 k8s-schema:
   extends: .k8s
   needs: [k8s-build]
-  script: [task k8s:schema]
+  script: [task k8s:lint:schema]
 
 k8s-lint:
   extends: .k8s
   needs: [k8s-build]
-  script: [task k8s:lint]
+  script: [task k8s:lint:kube-linter]

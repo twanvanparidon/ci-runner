@@ -8,7 +8,7 @@ Less is more: the base ships only what every job needs. Scopes add the rest.
 - aqua itself is verified against its pinned checksums file, once, in the `builder` image.
 - Build context allowlisted per scope via `.dockerignore`.
 - Runs as non-root `ci` (uid 10001).
-- git trusts every directory (`safe.directory = *`): checkouts are owned by another user (GitLab clones as root, `lcir` mounts yours) and a CI container has no other users to guard against.
+- git trusts every directory (`safe.directory = *`): checkouts are owned by another user (GitLab clones as root, a local `docker run` mounts yours) and a CI container has no other users to guard against.
 - setuid/setgid bits stripped; apk cache removed.
 
 ## Gotchas

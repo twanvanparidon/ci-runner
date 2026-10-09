@@ -15,7 +15,7 @@ tasks:
     deps: [":images:build"]
     cmds:
       - mkdir -p sbom
-      - for: { var: IMAGES }
+      - for: { var: TARGETS }
         task: sbom:one
         vars: { FILE: "{{.ITEM}}" }
 
@@ -23,7 +23,7 @@ tasks:
     desc: Scan SBOMs whose packages differ from the published image, fail on FAIL_ON or worse
     deps: [sbom]
     cmds:
-      - for: { var: IMAGES }
+      - for: { var: TARGETS }
         task: scan:one
         vars: { FILE: "{{.ITEM}}" }
 

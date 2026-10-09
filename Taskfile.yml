@@ -14,3 +14,20 @@ vars:
     src/general/images/Dockerfile
     src/k8s/images/Dockerfile
     src/docker/images/Dockerfile
+  BASE_REF: origin/main
+  # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose images/,
+  # scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
+  CHANGED_ONLY: "false"
+  SHARED: Taskfile.yml .Taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
+  TARGETS:
+    sh: |
+      all="{{.IMAGES | trim}}"
+      if [ "{{.CHANGED_ONLY}}" != true ] \
+        || ! git cat-file -e "{{.BASE_REF}}^{commit}" 2> /dev/null \
+        || ! git diff --quiet "{{.BASE_REF}}" -- {{.SHARED}}; then
+        echo "$all"; exit 0
+      fi
+      for f in $all; do
+        scope=$(dirname "$(dirname "$f")")
+        git diff --quiet "{{.BASE_REF}}" -- "$scope/images" "$scope/scripts" "$scope/.dockerignore" || echo "$f"
+      done

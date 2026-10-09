@@ -126,3 +126,8 @@ ignore:
   - vulnerability: GO-2026-6090  # High
     package: { name: stdlib, version: go1.26.4 }
     reason: "TODO: evaluate"
+
+  # k8s image: kubeconform v0.8.0
+  - vulnerability: GO-2026-5970  # High
+    package: { name: golang.org/x/text, version: v0.37.0 }
+    reason: "TODO: evaluate"

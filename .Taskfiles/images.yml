@@ -9,7 +9,7 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   check:
-    desc: Fail if an image or scripts directory changed since BASE_REF but its version is already published
+    desc: Fail if an image, its scripts, tasks.yml or .dockerignore changed since BASE_REF but its version is already published
     cmds:
       - for: { var: IMAGES }
         task: check:one
@@ -55,9 +55,9 @@ tasks:
     vars: *image
     cmds:
       - |
-        git diff --quiet {{.BASE_REF}} -- {{.FILE | dir}} {{.FILE | dir | dir}}/scripts && exit 0
+        git diff --quiet {{.BASE_REF}} -- {{.FILE | dir}} {{.FILE | dir | dir}}/scripts {{.FILE | dir | dir}}/tasks.yml {{.FILE | dir | dir}}/.dockerignore && exit 0
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
-          echo "{{.NAME}}: {{.FILE | dir}} or scripts changed but {{.VERSION}} is already published; bump ARG VERSION"
+          echo "{{.NAME}}: {{.FILE | dir}}, scripts, tasks.yml or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
           exit 1
         fi
 

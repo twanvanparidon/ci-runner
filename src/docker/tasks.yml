@@ -1,0 +1,30 @@
+# Image tasks for the docker scope, run as `ci ci:docker:<task>`.
+# Tasks run in the caller's directory.
+version: "3"
+
+vars:
+  # Every Dockerfile in the project, unless DOCKERFILES is given.
+  DOCKERFILES:
+    sh: find . \( -name Dockerfile -o -name '*.Dockerfile' \) -not -path './.git/*' | sort
+
+tasks:
+  lint:
+    desc: hadolint every Dockerfile (DOCKERFILES to choose), fail after checking all
+    cmds:
+      - |
+        rc=0
+        for f in {{.DOCKERFILES | catLines}}; do
+          echo "== $f"
+          hadolint "$f" || rc=1
+        done
+        exit $rc
+
+  build:
+    desc: Build an image (IMAGE, DOCKERFILE=Dockerfile, CONTEXT=., BUILD_ARGS)
+    requires:
+      vars: [IMAGE]
+    vars:
+      DOCKERFILE: '{{.DOCKERFILE | default "Dockerfile"}}'
+      CONTEXT: '{{.CONTEXT | default "."}}'
+    cmds:
+      - docker buildx build -f {{.DOCKERFILE}} {{.BUILD_ARGS}} -t {{.IMAGE}} --load {{.CONTEXT}}

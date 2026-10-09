@@ -22,6 +22,7 @@ Git tag `<image>/v<version>` marks the released commit.
 
 Images pin their dependencies exactly (`ARG BUILDER_VERSION`, `ARG GENERAL_VERSION`).
 Bumping `builder` or `general` means bumping the pin, which forces a version bump of the dependent image too.
+This can happen in two phases: bump `builder`, release, then move the pins. Until then the old pin is pulled from GHCR, so build with `REGISTRY=ghcr.io/twanvanparidon/ci-runner` (CI does).
 
 ## Supply chain
 

@@ -1,6 +1,36 @@
 {
   "checksums": [
     {
+      "id": "github_release/github.com/anchore/grype/v0.119.0/grype_0.119.0_linux_amd64.tar.gz",
+      "checksum": "3FA2DC4B924621AB65404CF08D0B8438D896D80AB949C9D5A4CA283C36004C9B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/anchore/grype/v0.119.0/grype_0.119.0_linux_arm64.tar.gz",
+      "checksum": "29F0EC7C549DDB0E2B6A0CA714851F7399438AFC399B80C12808E065EDC9A8F8",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/anchore/syft/v1.54.1/syft_1.54.1_linux_amd64.tar.gz",
+      "checksum": "C069905B391CC4C20A5BA65AD5C10BE2A7BA074F8EA6AD203E24D14E303DAD47",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/anchore/syft/v1.54.1/syft_1.54.1_linux_arm64.tar.gz",
+      "checksum": "DFDF0537610113EDBEFE1F1FC6548BC957B2D77439636EC824FCF0E10D46D054",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/docker/buildx/v0.38.0/buildx-v0.38.0.linux-amd64",
+      "checksum": "4FE4CC38ADF48169132749B6CA22A990928DB0118E3407584EE553723115D287",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/docker/buildx/v0.38.0/buildx-v0.38.0.linux-arm64",
+      "checksum": "38E890E1A162BFDBF32FBE91404991DC4FC28E55B0DE901B34374A061BAB4D2C",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/hadolint/hadolint/v2.15.1/hadolint-linux-arm64",
       "checksum": "F6198EF8090F404DBB771ABFEE086EB8C48AC177F30DA7FD3510ACA35B344B5D",
       "algorithm": "sha256"
@@ -8,6 +38,26 @@
     {
       "id": "github_release/github.com/hadolint/hadolint/v2.15.1/hadolint-linux-x86_64",
       "checksum": "C7187DB94EEEECA956519A6AF171ADC31453941A1E777961F6E680F697C8C507",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/sigstore/cosign/v3.1.3/cosign-linux-amd64",
+      "checksum": "4629C757B7618056F8DDD7E2625AE9FDD94C0372A65049520BC7D9DF9EFC7F71",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/sigstore/cosign/v3.1.3/cosign-linux-arm64",
+      "checksum": "C5D324E091826B0D7A78EB16FEF316450B4EB9AAEC045611C08BA06F5E73220A",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/download.docker.com/linux/static/stable/aarch64/docker-29.9.0.tgz",
+      "checksum": "811F6EEE271678FC98DBE5C4D896C00FC5FE2DAA4F7A37069C17ABC036EAB85B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/download.docker.com/linux/static/stable/x86_64/docker-29.9.0.tgz",
+      "checksum": "33E1AB8B63D14BCA449F7A3D30D7F6AA669DAA544E60A86B17FEC87F61AFE2B4",
       "algorithm": "sha256"
     },
     {

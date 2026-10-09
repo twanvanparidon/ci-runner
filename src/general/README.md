@@ -12,6 +12,7 @@ Hardened base runner every scope builds on. See [hardening](../../docs/hardening
 
 | Command | Does |
 |---|---|
+| `ci` | Run project and image tasks the same in CI and locally. See [ci](../../docs/ci.md). |
 | `ci_env` | Provider agnostic CI variables: `eval "$(ci_env)"`. See [CI env](../../docs/ci-env.md). |
 
 ## CI

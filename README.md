@@ -15,6 +15,8 @@ The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) exten
 | `src/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq, git |
 | `src/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
 | `src/_scope/` | Template for a new scope |
+| `taskfiles/` | Taskfiles for projects to copy, e.g. `lcir.yml` |
+| `examples/` | Example projects using the images, e.g. `docker-app` |
 | `docs/` | Extra documentation |
 
 ## Usage
@@ -27,6 +29,8 @@ task lint:dockerfiles # hadolint every image Dockerfile
 task --list           # everything else
 ```
 
+To run CI steps locally in the same images, include [`taskfiles/lcir.yml`](taskfiles/lcir.yml), see [ci](docs/ci.md).
+
 ## Docs
 
 - [Hardening](docs/hardening.md)
@@ -35,6 +39,7 @@ task --list           # everything else
 - [Builders](docs/builders.md)
 - [Adding a scope](docs/scopes.md)
 - [CI env](docs/ci-env.md)
+- [ci tasks](docs/ci.md)
 
 ## License
 

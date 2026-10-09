@@ -29,7 +29,7 @@ tasks:
       - |
         for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
           [ -f "$d/aqua.yaml" ] || continue
-          docker run --rm --user "$(id -u):$(id -g)" -e AQUA_ROOT_DIR=/tmp/aqua \
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e AQUA_ROOT_DIR=/tmp/aqua \
             -v "{{.ROOT_DIR}}/$d:/work" {{.BUILDER}} aqua update-checksum -prune
         done
 

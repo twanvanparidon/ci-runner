@@ -12,5 +12,5 @@ vars:
   IMAGES: >
     src/builder/images/Dockerfile
     src/general/images/Dockerfile
-    src/k8s/images/linter.Dockerfile
-    src/docker/images/linter.Dockerfile
+    src/k8s/images/Dockerfile
+    src/docker/images/Dockerfile

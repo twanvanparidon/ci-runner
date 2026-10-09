@@ -2,11 +2,11 @@ version: "3"
 
 tasks:
   dockerfiles:
-    desc: Lint every image Dockerfile with hadolint from the docker-linter image
+    desc: Lint every image Dockerfile with hadolint from the docker image
     deps: [":images:build"]
     vars:
       LINTER:
-        sh: echo "{{.REGISTRY}}/docker-linter:$(sed -n 's/^ARG VERSION=//p' src/docker/images/linter.Dockerfile)"
+        sh: echo "{{.REGISTRY}}/docker:$(sed -n 's/^ARG VERSION=//p' src/docker/images/Dockerfile)"
     cmds:
       - |
         set -o pipefail

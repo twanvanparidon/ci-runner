@@ -1,13 +1,18 @@
 #!/bin/sh
 # Install the tools locked in ./aqua.yaml and copy their real binaries
-# (not the aqua-proxy links) to $1, default /out.
+# (not the aqua-proxy links) to $OUT, default /out.
+# Pass command names to copy only those; default is every command.
 set -eu
 
-out="${1:-/out}"
+out="${OUT:-/out}"
 aqua install
 mkdir -p "$out"
-for link in "$AQUA_ROOT_DIR"/bin/*; do
-  [ -e "$link" ] || continue
-  cmd="$(basename "$link")"
+if [ "$#" -eq 0 ]; then
+  for link in "$AQUA_ROOT_DIR"/bin/*; do
+    [ -e "$link" ] || continue
+    set -- "$@" "$(basename "$link")"
+  done
+fi
+for cmd in "$@"; do
   cp "$(aqua which "$cmd")" "$out/$cmd"
 done

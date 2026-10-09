@@ -1,18 +1,13 @@
+# Runs inside the docker image, which ships hadolint (see README).
 version: "3"
 
 tasks:
   dockerfiles:
-    desc: Lint every image Dockerfile with hadolint from the docker image
-    deps: [":images:build"]
-    vars:
-      LINTER:
-        sh: echo "{{.REGISTRY}}/docker:$(sed -n 's/^ARG VERSION=//p' images/docker/Dockerfile)"
+    desc: Lint every image Dockerfile (or the changed ones) with hadolint
     cmds:
       - |
-        set -o pipefail
         rc=0
         for f in {{.TARGETS | catLines}}; do
-          docker run --rm -i -v "{{.ROOT_DIR}}/.hadolint.yaml:/.hadolint.yaml:ro" {{.LINTER}} \
-            hadolint --no-color --config /.hadolint.yaml - < "$f" | sed "s|^-:|$f:|" || rc=1
+          hadolint --no-color --config "{{.ROOT_DIR}}/.hadolint.yaml" "$f" || rc=1
         done
         exit $rc

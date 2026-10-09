@@ -5,6 +5,9 @@ on:
     - cron: "0 3 * * *"
   workflow_dispatch:
 
+env:
+  CI_IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294
+
 permissions:
   contents: read
   packages: read
@@ -14,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: go-task/setup-task@a00fbb05ce67b35648be3c78cbc9fd85354c757e # v2.2.0
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: task security:scan:published REGISTRY="ghcr.io/${GITHUB_REPOSITORY,,}"
+      # In this repo's own docker image, pinned to the last release (it ships syft and grype).
+      - name: Scan the published images
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            --group-add "$(stat -c %g /var/run/docker.sock)" \
+            -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" -e HOME=/tmp \
+            "$CI_IMAGE" task security:scan:published REGISTRY="ghcr.io/${GITHUB_REPOSITORY,,}"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

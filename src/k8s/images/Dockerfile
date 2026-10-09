@@ -10,6 +10,6 @@ COPY images/aqua.yaml images/aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${REGISTRY}/general:${GENERAL_VERSION}
-ARG VERSION=1.1.0
+ARG VERSION=1.2.0
 LABEL org.opencontainers.image.version=${VERSION}
 COPY --from=fetch /out/ /usr/local/bin/

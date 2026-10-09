@@ -8,6 +8,12 @@ Hardened base runner every scope builds on. See [hardening](../../docs/hardening
 |---|---|
 | `general` | alpine, ca-certificates, Task, jq |
 
+## Scripts
+
+| Command | Does |
+|---|---|
+| `ci_env` | Provider agnostic CI variables: `eval "$(ci_env)"`. See [CI env](../../docs/ci-env.md). |
+
 ## CI
 
 Pipeline examples per provider in `ci/<provider>/`.

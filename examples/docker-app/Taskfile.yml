@@ -1,0 +1,20 @@
+# Project steps that are not built in. Built-in steps (ci:docker:*) are called
+# straight from the workflow. Locally `task lcir:<step>` runs any of them in the CI image.
+version: "3"
+
+includes:
+  lcir:
+    taskfile: .taskfiles/lcir.yml
+    optional: true # host only; skipped inside the container
+    vars: { IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.2.0 }
+  pipeline: .taskfiles/pipeline.yml
+
+vars:
+  APP_IMAGE: docker-app:dev
+
+tasks:
+  smoke:
+    desc: Run the built image and check its output
+    cmds:
+      - docker run --rm {{.APP_IMAGE}} | grep -q "hello from docker-app"
+      - echo "smoke test passed for {{.APP_IMAGE}}"

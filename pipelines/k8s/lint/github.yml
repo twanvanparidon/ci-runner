@@ -1,0 +1,31 @@
+# Validate kustomize manifests: render every overlay, then schema check and lint
+# exactly what gets deployed. CI only, no deploy (GitOps does that).
+#
+# Copy to .github/workflows/k8s-lint.yml. Needs pipelines/k8s/lint/Taskfile.yml copied to
+# .taskfiles/k8s/lint/Taskfile.yml and included as `k8s:lint`.
+
+name: k8s-lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  K8S_DIR: k8s # directory with apps/, infrastructure/, ...
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/k8s:1.3.0@sha256:d6bc1703031ddd91054ae2f6be70b107127ea0fd25be5333375203514417a247
+      # Run as the hosted runner's user (owns the workspace) instead of root.
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: task k8s:lint:render
+      - run: task k8s:lint:schema
+      - run: task k8s:lint:kube-linter

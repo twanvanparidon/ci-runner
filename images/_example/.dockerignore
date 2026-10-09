@@ -1,0 +1,5 @@
+# Allowlist: only the aqua lock and scripts reach the build.
+*
+!aqua.yaml
+!aqua-checksums.json
+!scripts/*.sh

@@ -4,24 +4,26 @@ on:
   pull_request:
     # Only what feeds an image; docs, READMEs and ci/ examples never trigger it.
     paths:
-      - "src/*/images/**"
-      - "src/*/scripts/**"
-      - "src/*/tasks.yml"
-      - "src/*/.dockerignore"
+      - "images/*/Dockerfile"
+      - "images/*/*.Dockerfile"
+      - "images/*/aqua*"
+      - "images/*/scripts/**"
+      - "images/*/.dockerignore"
       - "Taskfile.yml"
-      - ".Taskfiles/**"
+      - ".taskfiles/**"
       - ".grype.yaml"
       - ".hadolint.yaml"
       - ".github/workflows/images.yml"
   push:
     branches: [main]
     paths:
-      - "src/*/images/**"
-      - "src/*/scripts/**"
-      - "src/*/tasks.yml"
-      - "src/*/.dockerignore"
+      - "images/*/Dockerfile"
+      - "images/*/*.Dockerfile"
+      - "images/*/aqua*"
+      - "images/*/scripts/**"
+      - "images/*/.dockerignore"
       - "Taskfile.yml"
-      - ".Taskfiles/**"
+      - ".taskfiles/**"
       - ".grype.yaml"
       - ".hadolint.yaml"
       - ".github/workflows/images.yml"

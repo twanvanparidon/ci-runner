@@ -1,0 +1,15 @@
+# Build an image with buildx. Image: ci-runner docker, plus a builder (see docs/builders.md).
+# Copy to .taskfiles/docker/build/Taskfile.yml, include as `docker:build`,
+# run `task docker:build IMAGE=<name:tag>`.
+version: "3"
+
+tasks:
+  default:
+    desc: Build IMAGE (DOCKERFILE=Dockerfile, CONTEXT=., BUILD_ARGS)
+    requires:
+      vars: [IMAGE]
+    vars:
+      DOCKERFILE: '{{.DOCKERFILE | default "Dockerfile"}}'
+      CONTEXT: '{{.CONTEXT | default "."}}'
+    cmds:
+      - docker buildx build -f {{.DOCKERFILE}} {{.BUILD_ARGS}} -t {{.IMAGE}} --load {{.CONTEXT}}

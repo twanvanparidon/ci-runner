@@ -1,0 +1,41 @@
+# Validate kustomize manifests: render every overlay, then schema check and lint
+# exactly what gets deployed. CI only, no deploy (GitOps does that).
+#
+# Add to .gitlab-ci.yml. Needs pipelines/k8s/lint/Taskfile.yml copied to
+# .taskfiles/k8s/lint/Taskfile.yml and included as `k8s:lint`.
+
+variables:
+  K8S_DIR: k8s # directory with apps/, infrastructure/, ...
+  K8S_IMAGE: ghcr.io/twanvanparidon/ci-runner/k8s:1.3.0@sha256:d6bc1703031ddd91054ae2f6be70b107127ea0fd25be5333375203514417a247
+
+stages:
+  - lint
+
+# MR pipelines for MRs, branch pipelines otherwise; never both.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.k8s:
+  stage: lint
+  image: $K8S_IMAGE
+
+k8s-build:
+  extends: .k8s
+  script: [task k8s:lint:render]
+  artifacts:
+    paths: [rendered/]
+    expire_in: 1 day
+
+k8s-schema:
+  extends: .k8s
+  needs: [k8s-build]
+  script: [task k8s:lint:schema]
+
+k8s-lint:
+  extends: .k8s
+  needs: [k8s-build]
+  script: [task k8s:lint:kube-linter]

@@ -1,0 +1,31 @@
+# On a release tag, point the GitOps repo's overlay at the new image.
+# Copy to .github/workflows/gitops.yml. Needs pipelines/k8s/gitops/Taskfile.yml copied to
+# .taskfiles/k8s/gitops/Taskfile.yml and included as `k8s:gitops`, and a GITOPS_TOKEN
+# secret with push access to the GitOps repo.
+
+name: gitops
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  set-image:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/k8s:1.3.0@sha256:d6bc1703031ddd91054ae2f6be70b107127ea0fd25be5333375203514417a247
+      options: --user 1001 # the runner user, owns the workspace
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: me/gitops # your GitOps repo
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+      # ci_env gives the same CI_* variables on GitHub and GitLab.
+      - run: |
+          eval "$(ci_env)"
+          task k8s:gitops DIR=gitops OVERLAY=apps/web/overlays/prod IMAGES="web=$CI_REGISTRY_IMAGE:$CI_TAG"

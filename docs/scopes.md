@@ -1,12 +1,14 @@
 # Adding a scope
 
-1. `cp -r src/_scope src/<name>`
-2. Add `src/<name>/images/Dockerfile` (copy `src/k8s/images/Dockerfile`): pin `ARG BUILDER_VERSION` and `ARG GENERAL_VERSION`, set `ARG VERSION=1.0.0`.
-3. List the tools in `src/<name>/images/aqua.yaml` and run `task images:lock`; `aqua_bootstrap` copies every tool, or only the commands you name.
-4. Put shared CI scripts in `src/<name>/scripts/*.sh`; they land on `PATH` without `.sh`. Tasks go in `src/<name>/tasks.yml`, see [ci](ci.md).
-5. Add the Dockerfile to `IMAGES` in `Taskfile.yml`, after its base. It is published as `<name>`.
-6. Put pipeline examples in `src/<name>/ci/<provider>/`.
-7. Fill in `src/<name>/README.md`.
+A scope is an image in `images/<name>/`, plus its pipelines in `pipelines/<name>/<purpose>/`.
 
-The build context is `src/<name>/`, allowlisted by its `.dockerignore` (aqua lock and scripts only).
-The version check watches `images/` and `scripts/`, so images in one scope bump together.
+1. `cp -r images/_example images/<name>`
+2. Add `images/<name>/Dockerfile` (copy `images/k8s/Dockerfile`): pin `ARG BUILDER_VERSION` and `ARG GENERAL_VERSION`, set `ARG VERSION=1.0.0`.
+3. List the tools in `images/<name>/aqua.yaml` and run `task images:lock`; `aqua_bootstrap` copies every tool, or only the commands you name.
+4. CI-only scripts (logins, GitOps pushes, provider plumbing) go in `images/<name>/scripts/*.sh` and land on `PATH` without `.sh`. Pipeline steps do not: they go in `pipelines/<name>/<purpose>/Taskfile.yml`, see [Pipelines](pipelines.md).
+5. Add the Dockerfile to `IMAGES` in `Taskfile.yml`, after its base. It is published as `<name>`.
+6. Add `github.yml` and `gitlab-ci.yml` examples next to each pipeline's Taskfile.
+7. Fill in `images/<name>/README.md`.
+
+The build context is `images/<name>/`, allowlisted by its `.dockerignore` (aqua lock and scripts only).
+The version check watches the Dockerfile, aqua files, `scripts/` and `.dockerignore`; README changes need no bump.

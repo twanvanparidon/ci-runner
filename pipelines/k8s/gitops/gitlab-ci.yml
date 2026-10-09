@@ -1,0 +1,13 @@
+# On a release tag, point the GitOps repo's overlay at the new image.
+# Add to .gitlab-ci.yml. Needs pipelines/k8s/gitops/Taskfile.yml copied to
+# .taskfiles/k8s/gitops/Taskfile.yml and included as `k8s:gitops`, and a masked
+# GITOPS_TOKEN variable (project access token with write_repository on the GitOps repo).
+
+gitops:
+  image: ghcr.io/twanvanparidon/ci-runner/k8s:1.3.0@sha256:d6bc1703031ddd91054ae2f6be70b107127ea0fd25be5333375203514417a247
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - git clone "https://gitlab-ci-token:${GITOPS_TOKEN}@gitlab.com/me/gitops.git" gitops # your GitOps repo
+    - eval "$(ci_env)" # same CI_* variables as on GitHub
+    - task k8s:gitops DIR=gitops OVERLAY=apps/web/overlays/prod IMAGES="web=$CI_REGISTRY_IMAGE:$CI_TAG"

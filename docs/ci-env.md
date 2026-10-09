@@ -1,6 +1,6 @@
 # CI env
 
-`ci_env` (in every image) maps each provider's variables to one set, so scripts work on any CI.
+`ci_env` (in every runner image) maps each provider's variables to one set, so scripts work on any CI.
 
 ```sh
 eval "$(ci_env)"

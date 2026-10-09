@@ -2,21 +2,19 @@
 
 Commonly used CI/CD pipelines plus hardened CI images.
 
-Images are published to `ghcr.io/twanvanparidon/ci-runner/<image>`.
-Pipelines run [Task](https://taskfile.dev), so the CI provider only calls `task <name>`.
-The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) extends it with only the tools it needs.
+- **Images** (`images/`): a minimal, hardened `general` runner, extended per scope (e.g. `k8s`) with only the tools it needs. Published to `ghcr.io/twanvanparidon/ci-runner/<image>`.
+- **Pipelines** (`pipelines/`): plain [Task](https://taskfile.dev) steps and CI examples to copy into projects, so the CI provider only calls `task <name>`.
 
 ## Layout
 
 | Path | Purpose |
 |---|---|
-| `src/builder/` | Builder image: aqua + `aqua_bootstrap`, the fetch stage of every image |
-| `src/general/` | Hardened base runner: alpine, Task, jq, non-root |
-| `src/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq, git |
-| `src/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
-| `src/_scope/` | Template for a new scope |
-| `taskfiles/` | Taskfiles for projects to copy, e.g. `lcir.yml` |
-| `examples/` | Example projects using the images, e.g. `docker-app` |
+| `images/builder/` | Builder image: aqua + `aqua_bootstrap`, the fetch stage of every image |
+| `images/general/` | Hardened base runner: alpine, Task, jq, git, non-root |
+| `images/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq |
+| `images/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
+| `images/_example/` | Template for a new image |
+| `pipelines/<scope>/<purpose>/` | Taskfile plus GitHub and GitLab examples to copy, e.g. `k8s/lint`, `k8s/gitops` |
 | `docs/` | Extra documentation |
 
 ## Usage
@@ -29,17 +27,13 @@ task lint:dockerfiles # hadolint every image Dockerfile
 task --list           # everything else
 ```
 
-To run CI steps locally in the same images, include [`taskfiles/lcir.yml`](taskfiles/lcir.yml), see [ci](docs/ci.md).
+To use the pipelines in a project, see [Pipelines](docs/pipelines.md).
 
 ## Docs
 
-- [Hardening](docs/hardening.md)
-- [SBOM](docs/sbom.md)
-- [Releasing](docs/releasing.md)
-- [Builders](docs/builders.md)
-- [Adding a scope](docs/scopes.md)
-- [CI env](docs/ci-env.md)
-- [ci tasks](docs/ci.md)
+Images: [Hardening](docs/hardening.md), [SBOM](docs/sbom.md), [Releasing](docs/releasing.md), [Builders](docs/builders.md), [Adding a scope](docs/scopes.md)
+
+Pipelines: [Pipelines](docs/pipelines.md), [CI env](docs/ci-env.md)
 
 ## License
 

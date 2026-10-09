@@ -1,0 +1,95 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Build TARGETS (all images, or changed ones with CHANGED_ONLY=true)
+    cmds:
+      - for: { var: TARGETS }
+        task: build:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  check:
+    desc: Fail if an image Dockerfile, aqua files, scripts or .dockerignore changed since BASE_REF but its version is already published
+    cmds:
+      - for: { var: IMAGES }
+        task: check:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  lock:
+    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml
+    vars:
+      BUILDER:
+        sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/Dockerfile)"
+    cmds:
+      - task: build:one
+        vars: { FILE: images/builder/Dockerfile }
+      - |
+        for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
+          [ -f "$d/aqua.yaml" ] || continue
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e AQUA_ROOT_DIR=/tmp/aqua \
+            -v "{{.ROOT_DIR}}/$d:/work" {{.BUILDER}} aqua update-checksum -prune
+        done
+
+  release:
+    desc: Build, push, sign and tag every image version missing from REGISTRY; finishes half-done releases
+    cmds:
+      - for: { var: IMAGES }
+        task: release:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  # Per image tasks; FILE is the Dockerfile path.
+
+  build:one:
+    internal: true
+    vars: &image
+      SCOPE: '{{.FILE | dir | base}}'
+      SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
+      NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
+      VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
+      REF: "{{.REGISTRY}}/{{.NAME}}:{{.VERSION}}"
+    cmds:
+      - docker build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} {{.FILE | dir}}
+
+  check:one:
+    internal: true
+    vars: *image
+    cmds:
+      - |
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
+        if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
+          echo "{{.NAME}}: Dockerfile, aqua files, scripts or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
+          exit 1
+        fi
+
+  release:one:
+    internal: true
+    vars: *image
+    cmds:
+      - |
+        tag="{{.NAME}}/v{{.VERSION}}"
+        if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
+          # Already published: finish a release that stopped halfway (unsigned or untagged).
+          ref="{{.REGISTRY}}/{{.NAME}}@$(docker buildx imagetools inspect {{.REF}} | sed -n 's/^Digest: *//p' | head -1)"
+          if cosign verify "$ref" --certificate-identity-regexp '.*' --certificate-oidc-issuer-regexp '.*' > /dev/null 2>&1; then
+            echo "{{.REF}} already published and signed"
+          else
+            echo "{{.REF}} published but unsigned, signing"
+            cosign sign --yes "$ref"
+          fi
+        else
+          meta=$(mktemp)
+          docker buildx build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} \
+            --platform linux/amd64,linux/arm64 --sbom=true --provenance=mode=max \
+            -t {{.REF}} \
+            -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
+            -t {{.REGISTRY}}/{{.NAME}}:latest \
+            -t "{{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD)" \
+            --metadata-file "$meta" --push {{.FILE | dir}}
+          cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
+        fi
+        if git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+          echo "git tag $tag exists"
+        else
+          git tag "$tag"
+          git push origin "$tag"
+        fi

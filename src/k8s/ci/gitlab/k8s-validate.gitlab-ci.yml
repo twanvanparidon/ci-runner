@@ -1,0 +1,50 @@
+# Validate kustomize manifests: render every overlay, then schema check and lint
+# exactly what gets deployed. CI only, no deploy (GitOps does that).
+#
+# Use: copy into .gitlab-ci.yml, or
+#   include:
+#     - remote: https://raw.githubusercontent.com/twanvanparidon/ci-runner/main/src/k8s/ci/gitlab/k8s-validate.gitlab-ci.yml
+
+variables:
+  K8S_DIR: k8s # directory with apps/, infrastructure/, ...
+  K8S_IMAGE: ghcr.io/twanvanparidon/ci-runner/k8s:1.2.0@sha256:ea5fb620c7b94247188d5885e546b3096905cc6ec139307b8d57a9062e45299c
+
+stages:
+  - lint
+
+# MR pipelines for MRs, branch pipelines otherwise; never both.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.k8s:
+  stage: lint
+  image: $K8S_IMAGE
+
+kustomize-build:
+  extends: .k8s
+  script:
+    - OUT="$CI_PROJECT_DIR/rendered" kustomize_build_all "$K8S_DIR"
+  artifacts:
+    paths: [rendered/]
+    expire_in: 1 day
+
+kubeconform:
+  extends: .k8s
+  needs: [kustomize-build]
+  script:
+    # CRDs: schemas from the community CRDs catalog, skip what is not in it.
+    - >
+      kubeconform -strict -summary -ignore-missing-schemas
+      -schema-location default
+      -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+      rendered
+
+kube-linter:
+  extends: .k8s
+  needs: [kustomize-build]
+  script:
+    - kube-linter lint rendered

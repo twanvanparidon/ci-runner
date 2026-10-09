@@ -1,6 +1,6 @@
 # k8s
 
-Kubernetes manifest building, validation and GitOps image updates.
+Kubernetes tooling and GitOps image updates. Validation steps live in [`pipelines/k8s`](../../pipelines/k8s).
 
 ## Images
 
@@ -12,18 +12,7 @@ Kubernetes manifest building, validation and GitOps image updates.
 
 | Command | Does |
 |---|---|
-| `kustomize_build_all [dir]` | Builds every kustomization under `dir` (skips components), fails on any error. `OUT=<dir>` keeps the rendered output. |
 | `gitops_set_image <overlay> <image>...` | `kustomize edit set image` in a checked out GitOps repo, checks the overlay still builds, commits and pushes (rebase and retry on conflict). `BRANCH`, `PUSH=false`. Image refs are not validated. |
-
-Validate what gets deployed:
-
-```sh
-OUT=rendered kustomize_build_all apps
-kubeconform -strict -summary rendered  # schemas; CRDs need -ignore-missing-schemas or a CRD schema location
-kube-linter lint rendered              # best practices
-```
-
-The examples pass `$K8S_DIR/.kube-linter.yaml` to kube-linter when it exists (override with `KUBE_LINTER_CONFIG`); kube-linter only auto-loads it from the working directory.
 
 ## CI
 

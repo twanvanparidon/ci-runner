@@ -6,7 +6,6 @@ on:
     paths:
       - "images/*/images/**"
       - "images/*/scripts/**"
-      - "images/*/tasks.yml"
       - "images/*/.dockerignore"
       - "Taskfile.yml"
       - ".Taskfiles/**"
@@ -18,7 +17,6 @@ on:
     paths:
       - "images/*/images/**"
       - "images/*/scripts/**"
-      - "images/*/tasks.yml"
       - "images/*/.dockerignore"
       - "Taskfile.yml"
       - ".Taskfiles/**"

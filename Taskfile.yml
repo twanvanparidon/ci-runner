@@ -16,7 +16,7 @@ vars:
     images/docker/images/Dockerfile
   BASE_REF: origin/main
   # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose images/,
-  # scripts/, tasks.yml or .dockerignore changed since BASE_REF (CI). Shared files select all.
+  # scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
   CHANGED_ONLY: "false"
   SHARED: Taskfile.yml .Taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
   TARGETS:
@@ -29,5 +29,5 @@ vars:
       fi
       for f in $all; do
         scope=$(dirname "$(dirname "$f")")
-        git diff --quiet "{{.BASE_REF}}" -- "$scope/images" "$scope/scripts" "$scope/tasks.yml" "$scope/.dockerignore" || echo "$f"
+        git diff --quiet "{{.BASE_REF}}" -- "$scope/images" "$scope/scripts" "$scope/.dockerignore" || echo "$f"
       done

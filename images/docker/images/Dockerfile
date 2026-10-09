@@ -18,4 +18,3 @@ ARG VERSION=1.3.0
 LABEL org.opencontainers.image.version=${VERSION}
 COPY --from=fetch /out/ /usr/local/bin/
 COPY --from=fetch /plugins/ /usr/local/lib/docker/cli-plugins/
-COPY tasks.yml /usr/local/share/ci-runner/docker.yml

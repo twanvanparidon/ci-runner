@@ -47,4 +47,7 @@ kube-linter:
   extends: .k8s
   needs: [kustomize-build]
   script:
-    - kube-linter lint rendered
+    # kube-linter only autoloads .kube-linter.yaml from the working dir, so pass it.
+    - KUBE_LINTER_CONFIG="${KUBE_LINTER_CONFIG:-$K8S_DIR/.kube-linter.yaml}"
+    - if [ -f "$KUBE_LINTER_CONFIG" ]; then set -- --config "$KUBE_LINTER_CONFIG"; fi
+    - kube-linter lint "$@" rendered

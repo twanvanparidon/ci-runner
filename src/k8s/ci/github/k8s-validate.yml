@@ -38,4 +38,8 @@ jobs:
           rendered
 
       - name: kube-linter
-        run: kube-linter lint rendered
+        # kube-linter only auto-loads .kube-linter.yaml from the working dir, so pass it.
+        run: |
+          KUBE_LINTER_CONFIG="${KUBE_LINTER_CONFIG:-$K8S_DIR/.kube-linter.yaml}"
+          if [ -f "$KUBE_LINTER_CONFIG" ]; then set -- --config "$KUBE_LINTER_CONFIG"; fi
+          kube-linter lint "$@" rendered

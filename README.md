@@ -12,6 +12,7 @@ The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) exten
 |---|---|
 | `general/` | Hardened base runner: alpine, Task, non-root |
 | `k8s/` | Kubernetes scope: kustomize, kube-linter |
+| `docker/` | Docker scope: hadolint |
 | `_scope/` | Template for a new scope |
 | `docs/` | Extra documentation |
 
@@ -21,6 +22,7 @@ The `general` image is a minimal, hardened runner; each scope (e.g. `k8s`) exten
 task images:build     # build all images
 task security:sbom    # build + write SBOMs to sbom/
 task security:scan    # sbom + vulnerability scan
+task lint:dockerfiles # hadolint every image Dockerfile
 task --list           # everything else
 ```
 

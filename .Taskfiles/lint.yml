@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+  dockerfiles:
+    desc: Lint every image Dockerfile with hadolint from the docker-linter image
+    deps: [":images:build"]
+    vars:
+      LINTER:
+        sh: echo "{{.REGISTRY}}/docker-linter:$(sed -n 's/^ARG VERSION=//p' docker/images/linter.Dockerfile)"
+    cmds:
+      - |
+        set -o pipefail
+        rc=0
+        for f in {{.IMAGES | trim}}; do
+          docker run --rm -i {{.LINTER}} hadolint --no-color - < "$f" | sed "s|^-:|$f:|" || rc=1
+        done
+        exit $rc

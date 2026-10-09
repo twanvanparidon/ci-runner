@@ -3,6 +3,7 @@ version: "3"
 includes:
   images: .Taskfiles/images.yml
   security: .Taskfiles/security.yml
+  lint: .Taskfiles/lint.yml
 
 vars:
   REGISTRY: ci-runner
@@ -11,3 +12,4 @@ vars:
   IMAGES: >
     general/images/Dockerfile
     k8s/images/linter.Dockerfile
+    docker/images/linter.Dockerfile

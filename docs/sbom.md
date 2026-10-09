@@ -10,6 +10,8 @@
 ## Scanning
 
 `task security:scan` runs [grype](https://github.com/anchore/grype) on each SBOM and fails on `FAIL_ON` (default `high`) or worse.
+Images whose packages match the already published version are skipped; the nightly `task security:scan:published` always scans everything (`FULL=true` forces it locally).
+grype's database lives in the `ci-runner-grype-db` Docker volume, so it downloads once instead of per image.
 Override per run: `task security:scan FAIL_ON=critical`.
 
 PRs and main run `task security:scan`. [`scan.yml`](../.github/workflows/scan.yml) runs `task security:scan:published` nightly against the registry; a failed nightly run is your alert.

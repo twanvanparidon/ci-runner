@@ -25,4 +25,7 @@ kube-linter lint rendered              # best practices
 
 ## CI
 
-Pipeline examples per provider in `ci/github/` and `ci/gitlab/`.
+| Example | Does |
+|---|---|
+| [`ci/gitlab/k8s-validate.gitlab-ci.yml`](ci/gitlab/k8s-validate.gitlab-ci.yml) | Render all overlays, then kubeconform and kube-linter on the output. CI only, no deploy. Copy it or `include: remote:` its raw URL. |
+| [`ci/github/k8s-validate.yml`](ci/github/k8s-validate.yml) | Same checks as steps of one container job (runner uid, not root). Copy to `.github/workflows/`. Not yet run on GitHub. |

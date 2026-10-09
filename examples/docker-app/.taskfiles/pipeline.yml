@@ -19,10 +19,10 @@ tasks:
     desc: Job lint
     cmds:
       - task: :lcir:run
-        vars: { IMAGE: "{{.PIPELINE_IMAGE}}", STEP: ci:docker:lint }
+        vars: { IMAGE: "{{.PIPELINE_IMAGE}}", STEP: docker:lint }
 
   build:
     desc: Job build
     cmds:
       - task: :lcir:run
-        vars: { IMAGE: "{{.PIPELINE_IMAGE}}", STEP: "ci:docker:build IMAGE=docker-app:dev" }
+        vars: { IMAGE: "{{.PIPELINE_IMAGE}}", STEP: "docker:build IMAGE=docker-app:dev" }

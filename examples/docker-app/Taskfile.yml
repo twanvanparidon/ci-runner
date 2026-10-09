@@ -1,8 +1,9 @@
-# Project steps that are not built in. Built-in steps (ci:docker:*) are called
-# straight from the workflow. Locally `task lcir:<step>` runs any of them in the CI image.
+# Shared steps come from .taskfiles/docker.yml (a copy of pipelines/docker/docker.yml);
+# smoke is this project's own step. Locally `task lcir:<task>` runs any of them in the CI image.
 version: "3"
 
 includes:
+  docker: .taskfiles/docker.yml
   lcir:
     taskfile: .taskfiles/lcir.yml
     optional: true # host only; skipped inside the container

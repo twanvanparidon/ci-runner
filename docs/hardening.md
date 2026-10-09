@@ -13,7 +13,7 @@ Less is more: the base ships only what every job needs. Scopes add the rest.
 
 ## Gotchas
 
-- GitHub Actions `container:` jobs: use `options: --user 1001`, the runner's user, which owns the workspace.
+- GitHub Actions `container:` jobs: use `options: --user 1001:1001`, the runner's user, which owns the workspace. Add `--group-add 118` (the docker socket group on GitHub's Ubuntu runners) when the job uses Docker.
 - To install packages in a scope, switch to `USER 0` and back to `USER 10001:10001` (numeric, so hadolint is happy).
 
 ## Bumping versions

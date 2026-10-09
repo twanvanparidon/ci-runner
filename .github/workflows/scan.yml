@@ -5,25 +5,28 @@ on:
     - cron: "0 3 * * *"
   workflow_dispatch:
 
-env:
-  CI_IMAGE: ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294
-
 permissions:
   contents: read
   packages: read
 
+# Runs in this repo's own docker image, pinned to the last release (same pin as images.yml).
+# --user 1001:1001 is the runner user (owns the workspace), 118 the docker socket group.
+
 jobs:
   scan:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294
+      options: --user 1001:1001 --group-add 118
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      # In this repo's own docker image, pinned to the last release (it ships syft and grype).
-      - name: Scan the published images
+      - name: Log in and scan the published images
         run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-            --group-add "$(stat -c %g /var/run/docker.sock)" \
-            -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" -e HOME=/tmp \
-            "$CI_IMAGE" task security:scan:published REGISTRY="ghcr.io/${GITHUB_REPOSITORY,,}"
+          eval "$(ci_env)"
+          echo "$TOKEN" | docker login ghcr.io -u "$CI_ACTOR" --password-stdin
+          task security:scan:published REGISTRY="$CI_REGISTRY_IMAGE"
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

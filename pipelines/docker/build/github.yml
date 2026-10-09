@@ -1,7 +1,7 @@
 # Build the image. Copy to .github/workflows/docker-build.yml. Needs
 # pipelines/docker/build/Taskfile.yml copied to .taskfiles/docker/build/Taskfile.yml
 # and included as `docker:build`. Builds on the runner's Docker, which GitHub
-# mounts into container jobs; the socket's group may need --group-add.
+# mounts into container jobs; 118 is its socket group on GitHub's Ubuntu runners.
 
 name: docker-build
 
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294
-      options: --user 1001 # the runner user, owns the workspace
+      options: --user 1001:1001 --group-add 118 # runner user, docker socket group
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # ci_env gives the same CI_* variables on GitHub and GitLab.

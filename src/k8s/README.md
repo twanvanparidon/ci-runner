@@ -6,7 +6,7 @@ Kubernetes manifest building, validation and GitOps image updates.
 
 | Image | Adds |
 |---|---|
-| `k8s` | kustomize, kube-linter, kubeconform, yq, git |
+| `k8s` | kustomize, kube-linter, kubeconform, yq |
 
 ## Scripts
 

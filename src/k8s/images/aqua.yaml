@@ -11,3 +11,4 @@ checksum:
 packages:
   - name: kubernetes-sigs/kustomize@kustomize/v5.8.3
   - name: stackrox/kube-linter@v0.8.3
+  - name: mikefarah/yq@v4.54.1

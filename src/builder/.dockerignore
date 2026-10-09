@@ -1,0 +1,3 @@
+# Allowlist: only the scripts reach the build.
+*
+!scripts/*.sh

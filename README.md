@@ -34,3 +34,7 @@ task --list           # everything else
 - [Releasing](docs/releasing.md)
 - [Builders](docs/builders.md)
 - [Adding a scope](docs/scopes.md)
+
+## License
+
+[MIT](LICENSE)

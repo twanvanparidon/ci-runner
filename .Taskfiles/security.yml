@@ -1,0 +1,67 @@
+version: "3"
+
+vars:
+  SYFT: anchore/syft:v1.54.1
+  GRYPE: anchore/grype:v0.120.1
+  FAIL_ON: high
+
+tasks:
+  sbom:
+    desc: Write an SBOM per image to sbom/ (SPDX to share, syft json to scan)
+    deps: [":images:build"]
+    cmds:
+      - mkdir -p sbom
+      - for: { var: IMAGES }
+        task: sbom:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  scan:
+    desc: Scan the SBOMs for vulnerabilities, fail on FAIL_ON or worse
+    deps: [sbom]
+    cmds:
+      - for: { var: IMAGES }
+        task: scan:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  scan:published:
+    desc: Scan the published images in REGISTRY
+    cmds:
+      - mkdir -p sbom
+      - for: { var: IMAGES }
+        task: scan:published:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  # Per image tasks; FILE is the Dockerfile path.
+
+  sbom:one:
+    internal: true
+    vars: &image
+      SCOPE: '{{.FILE | dir | dir}}'
+      SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
+      NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
+      VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
+      REF: "{{.REGISTRY}}/{{.NAME}}:{{.VERSION}}"
+    cmds:
+      - >
+        docker run --rm -e SYFT_GOLANG_CAPTURE_SYMBOLS=all
+        -v /var/run/docker.sock:/var/run/docker.sock
+        {{.SYFT}} {{.REF}} -q -o syft-json > sbom/{{.NAME}}.syft.json
+      - docker run --rm -i {{.SYFT}} convert - -q -o spdx-json < sbom/{{.NAME}}.syft.json > sbom/{{.NAME}}.spdx.json
+
+  scan:one:
+    internal: true
+    vars: *image
+    cmds:
+      - >
+        docker run --rm -i -v "{{.ROOT_DIR}}/.grype.yaml:/grype.yaml:ro"
+        {{.GRYPE}} -c /grype.yaml --fail-on {{.FAIL_ON}} < sbom/{{.NAME}}.syft.json
+
+  scan:published:one:
+    internal: true
+    vars: *image
+    cmds:
+      - docker pull -q {{.REF}}
+      - task: sbom:one
+        vars: { FILE: "{{.FILE}}" }
+      - task: scan:one
+        vars: { FILE: "{{.FILE}}" }

@@ -1,0 +1,13 @@
+version: "3"
+
+includes:
+  images: .Taskfiles/images.yml
+  security: .Taskfiles/security.yml
+
+vars:
+  REGISTRY: ci-runner
+  # Build order matters: base images first.
+  # <scope>/images/Dockerfile is image <scope>, <scope>/images/<name>.Dockerfile is <scope>-<name>.
+  IMAGES: >
+    general/images/Dockerfile
+    k8s/images/linter.Dockerfile

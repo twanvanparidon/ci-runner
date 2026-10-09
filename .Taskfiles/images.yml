@@ -1,0 +1,70 @@
+version: "3"
+
+vars:
+  BASE_REF: origin/main
+
+tasks:
+  build:
+    desc: Build all images locally
+    cmds:
+      - for: { var: IMAGES }
+        task: build:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  check:
+    desc: Fail if an image changed since BASE_REF but its version is already published
+    cmds:
+      - for: { var: IMAGES }
+        task: check:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  release:
+    desc: Build, push and sign every image whose version is not yet in REGISTRY
+    cmds:
+      - for: { var: IMAGES }
+        task: release:one
+        vars: { FILE: "{{.ITEM}}" }
+
+  # Per image tasks; FILE is the Dockerfile path.
+
+  build:one:
+    internal: true
+    vars: &image
+      SCOPE: '{{.FILE | dir | dir}}'
+      SUFFIX: '{{.FILE | base | trimSuffix "Dockerfile" | trimSuffix "."}}'
+      NAME: '{{.SCOPE}}{{if .SUFFIX}}-{{.SUFFIX}}{{end}}'
+      VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
+      REF: "{{.REGISTRY}}/{{.NAME}}:{{.VERSION}}"
+    cmds:
+      - docker build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} {{.FILE | dir}}
+
+  check:one:
+    internal: true
+    vars: *image
+    cmds:
+      - |
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} && exit 0
+        if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
+          echo "{{.NAME}}: {{.FILE}} changed but {{.VERSION}} is already published; bump ARG VERSION"
+          exit 1
+        fi
+
+  release:one:
+    internal: true
+    vars: *image
+    cmds:
+      - |
+        if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
+          echo "{{.REF}} already published, skipping"; exit 0
+        fi
+        meta=$(mktemp)
+        docker buildx build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} \
+          --platform linux/amd64,linux/arm64 --sbom=true --provenance=mode=max \
+          -t {{.REF}} \
+          -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
+          -t {{.REGISTRY}}/{{.NAME}}:latest \
+          -t {{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD) \
+          --metadata-file "$meta" --push {{.FILE | dir}}
+        cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
+        git tag {{.NAME}}/v{{.VERSION}}
+        git push origin {{.NAME}}/v{{.VERSION}}

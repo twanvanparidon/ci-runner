@@ -6,7 +6,7 @@
 
 variables:
   K8S_DIR: k8s # directory with apps/, infrastructure/, ...
-  K8S_IMAGE: ghcr.io/twanvanparidon/ci-runner/k8s:1.3.0@sha256:d6bc1703031ddd91054ae2f6be70b107127ea0fd25be5333375203514417a247
+  K8S_IMAGE: ghcr.io/twanvanparidon/ci-runner/k8s:1.4.0@sha256:2ee36083e002aa33e84ad26c5336dee6bf45e2ce7d0ca130dd1ddc4ae3908611
 
 stages:
   - lint

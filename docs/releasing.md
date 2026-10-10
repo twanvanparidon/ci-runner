@@ -52,4 +52,4 @@ docker buildx imagetools inspect ghcr.io/twanvanparidon/ci-runner/general:1.0.0 
 
 ## Security patches
 
-Alpine patches only land on rebuild. When the nightly scan flags one, bump the patch version.
+Alpine patches only land on rebuild. When the weekly scan flags one, bump the patch version.

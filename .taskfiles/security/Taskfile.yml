@@ -3,7 +3,7 @@ version: "3"
 
 vars:
   FAIL_ON: high
-  # FULL=true scans even when packages match the published image (nightly).
+  # FULL=true scans even when packages match the published image (weekly scan).
   FULL: "false"
 
 tasks:
@@ -62,7 +62,7 @@ tasks:
     cmds:
       - |
         {{if ne .FULL "true"}}
-        # Unchanged packages vs the published version: nightly covers new CVEs.
+        # Unchanged packages vs the published version: the weekly scan covers new CVEs.
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
           pkgs='[.artifacts[] | "\(.type) \(.name) \(.version)"] | sort | .[]'
           published=$(syft registry:{{.REF}} -q -o syft-json | jq -r "$pkgs")

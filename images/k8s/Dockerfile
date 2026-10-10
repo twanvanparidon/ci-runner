@@ -1,7 +1,7 @@
 # k8s tooling: general runner + kustomize + kube-linter + kubeconform + yq.
 
 ARG REGISTRY=ci-runner
-ARG BUILDER_VERSION=1.2.0
+ARG BUILDER_VERSION=1.2.1
 ARG GENERAL_VERSION=1.4.0
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch

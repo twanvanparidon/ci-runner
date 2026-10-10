@@ -6,10 +6,22 @@
 
 name: k8s-lint
 
+# Only when the manifests or the lint setup change. paths cannot read env: keep k8s/ in
+# sync with K8S_DIR.
 on:
   pull_request:
+    paths:
+      - "k8s/**"
+      - "Taskfile.yml"
+      - ".taskfiles/k8s/lint/**"
+      - ".github/workflows/k8s-lint.yml"
   push:
     branches: [main]
+    paths:
+      - "k8s/**"
+      - "Taskfile.yml"
+      - ".taskfiles/k8s/lint/**"
+      - ".github/workflows/k8s-lint.yml"
 
 permissions:
   contents: read

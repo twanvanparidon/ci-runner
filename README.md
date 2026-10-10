@@ -22,7 +22,7 @@ Commonly used CI/CD pipelines plus hardened CI images.
 The tasks run inside this repo's own `docker` image, like CI does (it ships syft, grype, hadolint):
 
 ```sh
-alias in-ci='docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --group-add "$(stat -Lc %g /var/run/docker.sock 2>/dev/null || stat -Lf %g /var/run/docker.sock)" -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" -e HOME=/tmp ghcr.io/twanvanparidon/ci-runner/docker:1.3.0'
+alias in-ci='docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --group-add "$(stat -Lc %g /var/run/docker.sock 2>/dev/null || stat -Lf %g /var/run/docker.sock)" -v "$PWD:$PWD" -w "$PWD" --user "$(id -u):$(id -g)" -e HOME=/tmp ghcr.io/twanvanparidon/ci-runner/docker:1.3.1'
 in-ci task images:build     # build all images
 in-ci task security:sbom    # build + write SBOMs to sbom/
 in-ci task security:scan    # sbom + vulnerability scan

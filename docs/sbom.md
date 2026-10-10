@@ -17,6 +17,11 @@ PRs and main run `task security:scan`. [`scan.yml`](../.github/workflows/scan.ym
 
 Published images also carry their SBOM as an attestation, see [releasing](releasing.md).
 
+## Dependency graph
+
+After a release, `task security:sbom:github` submits the packages of every published image to GitHub's [dependency submission API](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api), one snapshot per image.
+They show up under Insights, Dependency graph, and in Dependabot alerts when those are enabled.
+
 ## Accepting risk
 
 When a finding fails the scan, either fix it (bump the tool) or accept it in [`.grype.yaml`](../.grype.yaml) with a reason.

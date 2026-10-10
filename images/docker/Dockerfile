@@ -3,7 +3,7 @@
 
 ARG REGISTRY=ci-runner
 ARG BUILDER_VERSION=1.2.1
-ARG GENERAL_VERSION=1.4.0
+ARG GENERAL_VERSION=1.4.1
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
 # scripts* is optional: a scope without scripts still builds.
@@ -14,7 +14,7 @@ RUN aqua_bootstrap docker docker-cli-plugin-docker-buildx hadolint cosign syft g
  && mv /out/docker-cli-plugin-docker-buildx /plugins/docker-buildx
 
 FROM ${REGISTRY}/general:${GENERAL_VERSION}
-ARG VERSION=1.3.1
+ARG VERSION=1.3.2
 LABEL org.opencontainers.image.version=${VERSION}
 COPY --from=fetch /out/ /usr/local/bin/
 COPY --from=fetch /plugins/ /usr/local/lib/docker/cli-plugins/

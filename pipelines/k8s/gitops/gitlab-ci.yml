@@ -4,7 +4,7 @@
 # GITOPS_TOKEN variable (project access token with write_repository on the GitOps repo).
 
 gitops:
-  image: ghcr.io/twanvanparidon/ci-runner/k8s:1.4.1@sha256:9f25f8fff02f8d0c9146b10ec5d545bcd01c7899c259fc9b7114c4c91c8be7ca
+  image: ghcr.io/twanvanparidon/ci-runner/k8s:1.4.2@sha256:9028d7d0f7226dabb58ccf485eab00ce3a0e4274b7541abd55468f59b9a8b13c
   rules:
     - if: $CI_COMMIT_TAG
   script:

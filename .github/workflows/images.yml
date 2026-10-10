@@ -96,7 +96,30 @@ jobs:
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - run: task images:release REGISTRY="$REGISTRY"
-      # The released packages on the repo's dependency graph (Insights) and in Dependabot alerts.
-      - run: task security:sbom:github REGISTRY="$REGISTRY"
+
+  # The published images on the repo's dependency graph (Insights) and in Dependabot alerts.
+  # A host job, so gh can submit and print GitHub's errors; a failure leaves the release green.
+  dependency-graph:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # dependency submission
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Same pin as the jobs above.
+      - name: Write snapshots
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:$PWD" -w "$PWD" -e HOME=/tmp \
+            -e GITHUB_RUN_ID -e GITHUB_SHA -e GITHUB_REF \
+            ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294 \
+            task security:sbom:github REGISTRY="ghcr.io/${GITHUB_REPOSITORY,,}"
+      - name: Submit snapshots
+        run: |
+          rc=0
+          for f in sbom/*.github.json; do
+            echo "$f"
+            gh api -X POST "repos/$GITHUB_REPOSITORY/dependency-graph/snapshots" --input "$f" || rc=1
+          done
+          exit $rc
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -33,7 +33,7 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   sbom:github:
-    desc: Submit the packages of every published image to the GitHub dependency graph (GitHub Actions, needs GITHUB_TOKEN with contents write)
+    desc: Write a GitHub dependency snapshot per published image to sbom/ (GitHub Actions, uses GITHUB_RUN_ID, GITHUB_SHA, GITHUB_REF)
     cmds:
       - mkdir -p sbom
       - for: { var: IMAGES }
@@ -95,6 +95,3 @@ tasks:
         syft registry:{{.REF}} -q -o github-json \
           | jq '.job = {correlator: "image-{{.NAME}}", id: env.GITHUB_RUN_ID} | .sha = env.GITHUB_SHA | .ref = env.GITHUB_REF' \
           > sbom/{{.NAME}}.github.json
-        wget -qO- --header "Authorization: Bearer $GITHUB_TOKEN" --header "Content-Type: application/json" \
-          --post-file sbom/{{.NAME}}.github.json "https://api.github.com/repos/$GITHUB_REPOSITORY/dependency-graph/snapshots"
-        echo

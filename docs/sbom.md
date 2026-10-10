@@ -19,7 +19,7 @@ Published images also carry their SBOM as an attestation, see [releasing](releas
 
 ## Dependency graph
 
-After a release, `task security:sbom:github` submits the packages of every published image to GitHub's [dependency submission API](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api), one snapshot per image.
+After a release, the `dependency-graph` job runs `task security:sbom:github` and submits the packages of every published image to GitHub's [dependency submission API](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api), one snapshot per image.
 They show up under Insights, Dependency graph, and in Dependabot alerts when those are enabled.
 
 ## Accepting risk

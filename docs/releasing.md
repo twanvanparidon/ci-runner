@@ -26,6 +26,19 @@ Images pin their dependencies exactly (`ARG BUILDER_VERSION`, `ARG GENERAL_VERSI
 Bumping `builder` or `general` means bumping the pin, which forces a version bump of the dependent image too.
 This can happen in two phases: bump `builder`, release, then move the pins. Until then the old pin is pulled from GHCR, so build with `REGISTRY=ghcr.io/twanvanparidon/ci-runner` (CI does).
 
+## Renovate
+
+Renovate (the Mend GitHub App, config in `.github/renovate.json5`) opens PRs on Monday mornings for:
+
+- `aqua.yaml` tools, the aqua registry ref and the aqua CLI (`ARG AQUA_VERSION`), as one `aqua` PR
+- GitHub Action SHAs, as one `github actions` PR
+- the Alpine digest (`ARG ALPINE`)
+- this repo's own images, at any time: `ARG BUILDER_VERSION`, `ARG GENERAL_VERSION`, and the runner pins in the workflows, `pipelines/` and the README
+
+On each Renovate PR, `.github/workflows/renovate.yml` runs `task images:lock` and `task images:bump` and commits the result, so `images:check` passes. Releases cascade: a new `builder` release gets a PR moving the pins in the other images, which bumps those, and so on.
+
+It needs the secret `RENOVATE_GLUE_TOKEN`: a fine-grained token with `contents: write` on this repo, so its push triggers `images.yml`.
+
 ## Supply chain
 
 Every push carries a BuildKit SBOM and provenance attestation, and the image is signed keyless with cosign.

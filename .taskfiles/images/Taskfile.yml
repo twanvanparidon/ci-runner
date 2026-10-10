@@ -16,11 +16,17 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   lock:
-    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml
+    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml, and the builder's AQUA_CHECKSUMS_SHA256 after editing AQUA_VERSION
     vars:
       BUILDER:
         sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/Dockerfile)"
+    set: [pipefail]
     cmds:
+      - |
+        f=images/builder/Dockerfile
+        v=$(sed -n 's/^ARG AQUA_VERSION=//p' "$f")
+        sum=$(wget -qO- "https://github.com/aquaproj/aqua/releases/download/v$v/aqua_${v}_checksums.txt" | sha256sum | cut -d' ' -f1)
+        sed "s/^ARG AQUA_CHECKSUMS_SHA256=.*/ARG AQUA_CHECKSUMS_SHA256=$sum/" "$f" > "$f.tmp" && mv "$f.tmp" "$f"
       - task: build:one
         vars: { FILE: images/builder/Dockerfile }
       - |
@@ -29,6 +35,13 @@ tasks:
           docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e AQUA_ROOT_DIR=/tmp/aqua \
             -v "{{.ROOT_DIR}}/$d:/work" {{.BUILDER}} aqua update-checksum -prune
         done
+
+  bump:
+    desc: Bump the patch version of every image that changed since BASE_REF but kept its version (what images:check asks for)
+    cmds:
+      - for: { var: IMAGES }
+        task: bump:one
+        vars: { FILE: "{{.ITEM}}" }
 
   release:
     desc: Build, push, sign and tag every image version missing from REGISTRY; finishes half-done releases
@@ -60,6 +73,17 @@ tasks:
           echo "{{.NAME}}: Dockerfile, aqua files, scripts or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
           exit 1
         fi
+
+  bump:one:
+    internal: true
+    vars: *image
+    cmds:
+      - |
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
+        [ "$(git show {{.BASE_REF}}:{{.FILE}} 2> /dev/null | sed -n 's/^ARG VERSION=//p')" = "{{.VERSION}}" ] || exit 0
+        next=$(echo "{{.VERSION}}" | awk -F. '{ print $1 "." $2 "." $3 + 1 }')
+        sed "s/^ARG VERSION=.*/ARG VERSION=$next/" {{.FILE}} > {{.FILE}}.tmp && mv {{.FILE}}.tmp {{.FILE}}
+        echo "{{.NAME}}: {{.VERSION}} -> $next"
 
   release:one:
     internal: true

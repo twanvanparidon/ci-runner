@@ -32,7 +32,7 @@ permissions:
   contents: read
 
 # Every job runs in this repo's own docker image, pinned to the last release: a broken
-# new release cannot break the pipeline that fixes it. Keep the three pins in sync.
+# new release cannot break the pipeline that fixes it. Renovate moves all pins together.
 # --user 1001:1001 is the runner user (owns the workspace), 118 the docker socket group.
 
 jobs:

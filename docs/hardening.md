@@ -18,4 +18,4 @@ Less is more: the base ships only what every job needs. Scopes add the rest.
 
 ## Bumping versions
 
-Edit the version in the image directory's `aqua.yaml`, run `task images:lock`, bump the image's `ARG VERSION`, then run `task security:scan`.
+Renovate does this weekly (see [Releasing](releasing.md#renovate)). By hand: edit the version in the image directory's `aqua.yaml`, run `task images:lock`, bump the image's `ARG VERSION` (or run `task images:bump`), then run `task security:scan`.

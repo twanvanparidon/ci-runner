@@ -1,0 +1,102 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    // aqua.yaml packages and the aqua registry ref.
+    "github>aquaproj/aqua-renovate-config#2.13.0",
+  ],
+  timezone: "Europe/Amsterdam",
+  // Weekly, right after the Sunday scan.
+  schedule: ["before 9am on monday"],
+  // The glue workflow (.github/workflows/renovate.yml) commits the lock files and version
+  // bumps to Renovate branches; keep rebasing them anyway.
+  gitIgnoredAuthors: ["41898282+github-actions[bot]@users.noreply.github.com"],
+  // The pipelines/ examples are workflows too.
+  "github-actions": {
+    managerFilePatterns: ["/^pipelines/.+/github\\.ya?ml$/"],
+  },
+  // FROM ${REGISTRY}/...:${..._VERSION} resolves to bogus Docker Hub images, and ARG ALPINE
+  // is matched below; the custom managers cover every FROM in images/.
+  dockerfile: {
+    enabled: false,
+  },
+  customManagers: [
+    {
+      // The aqua registry ref; the aqua preset only reads it with a "# renovate:" comment.
+      customType: "regex",
+      managerFilePatterns: ["/(^|/)aqua\\.yaml$/"],
+      matchStrings: ["type: standard\\s+ref: (?<currentValue>\\S+)"],
+      depNameTemplate: "aquaproj/aqua-registry",
+      datasourceTemplate: "github-releases",
+    },
+    {
+      // ARG ALPINE=alpine:<tag>@<digest> in the Dockerfiles.
+      customType: "regex",
+      managerFilePatterns: ["/^images/.+Dockerfile$/"],
+      matchStrings: ["ARG ALPINE=(?<depName>alpine):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"],
+      datasourceTemplate: "docker",
+    },
+    {
+      // The aqua CLI in the builder image; the glue workflow fills AQUA_CHECKSUMS_SHA256.
+      customType: "regex",
+      managerFilePatterns: ["/^images/builder/Dockerfile$/"],
+      matchStrings: ["ARG AQUA_VERSION=(?<currentValue>\\S+)"],
+      depNameTemplate: "aquaproj/aqua",
+      datasourceTemplate: "github-releases",
+      extractVersionTemplate: "^v(?<version>.*)$",
+    },
+    {
+      // Images pinning other images of this repo: ARG BUILDER_VERSION, ARG GENERAL_VERSION.
+      customType: "regex",
+      managerFilePatterns: ["/^images/.+Dockerfile$/"],
+      matchStrings: ["ARG (?<image>BUILDER|GENERAL)_VERSION=(?<currentValue>\\S+)"],
+      depNameTemplate: "ghcr.io/twanvanparidon/ci-runner/{{{lowercase image}}}",
+      datasourceTemplate: "docker",
+      versioningTemplate: "semver",
+    },
+    {
+      // This repo's runner images in the workflows, pipelines/ examples and README
+      // (GitLab files and variables included, which no built-in manager reads here).
+      customType: "regex",
+      managerFilePatterns: ["/^\\.github/workflows/.+\\.ya?ml$/", "/^pipelines/.+\\.ya?ml$/", "/^README\\.md$/"],
+      matchStrings: ["(?<depName>ghcr\\.io/twanvanparidon/ci-runner/[a-z0-9-]+):(?<currentValue>\\d+\\.\\d+\\.\\d+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"],
+      datasourceTemplate: "docker",
+      versioningTemplate: "semver",
+    },
+  ],
+  packageRules: [
+    {
+      // The custom manager above owns these pins; don't update them twice.
+      matchManagers: ["github-actions"],
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/twanvanparidon/ci-runner/**"],
+      enabled: false,
+    },
+    {
+      matchManagers: ["github-actions"],
+      matchDepTypes: ["action"],
+      groupName: "github actions",
+    },
+    {
+      // aqua CLI, registry and tools: one PR, one lock run.
+      matchDepNames: ["aquaproj/aqua"],
+      groupName: "aqua",
+    },
+    {
+      matchFileNames: ["**/aqua.yaml"],
+      groupName: "aqua",
+    },
+    {
+      // v0.120+ uses sigstore bundles; aqua-registry entry not updated yet (see images/docker/aqua.yaml).
+      matchPackageNames: ["anchore/grype"],
+      allowedVersions: "<0.120.0",
+    },
+    {
+      // Our own images: at any time, so a builder or general release reaches the images
+      // and pipelines that pin it without waiting a week per hop.
+      matchPackageNames: ["ghcr.io/twanvanparidon/ci-runner/**"],
+      schedule: ["at any time"],
+    },
+  ],
+}

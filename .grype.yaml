@@ -1,133 +1,128 @@
-# Accepted scan findings. Entries match an exact package version, so a bump
-# drops them and the finding must be re-evaluated. Replace each TODO with the
-# reason the risk is accepted, or fix it and remove the entry.
+# Accepted scan findings, one entry per advisory (no package version): a tool bump does not
+# re-raise a judged advisory, a new advisory still fails the scan. Entries are grouped by why
+# the risk is accepted; add a new one to its group, or fix it (bump the tool) and remove it.
+# Reviewed 2026-10-10 (#17). Remove entries that no longer match anything.
 
 ignore:
-  # kube-linter v0.8.3 (/usr/local/bin/kube-linter)
-  - vulnerability: GHSA-fqw6-gf59-qr4w  # High
-    package: { name: github.com/containerd/containerd, version: v1.7.30 }
-    reason: "TODO: evaluate"
-  - vulnerability: GHSA-m37j-52j7-pjw7  # High
-    package: { name: oras.land/oras-go/v2, version: v2.6.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GHSA-xhf5-7wjv-pqxp  # High
-    package: { name: github.com/containerd/containerd, version: v1.7.30 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4866  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4870  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4918  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4946  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4947  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4971  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4981  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5026  # High
-    package: { name: golang.org/x/net, version: v0.48.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5026  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5037  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5064  # Critical
-    package: { name: github.com/containerd/containerd, version: v1.7.30 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5338  # Critical
-    package: { name: github.com/containerd/containerd, version: v1.7.30 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5942  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5970  # High
-    package: { name: golang.org/x/text, version: v0.33.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5972  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6088  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6090  # High
-    package: { name: stdlib, version: go1.26.1 }
-    reason: "TODO: evaluate"
 
-  # docker image: cosign v3.1.3, grype v0.119.0, buildx v0.38.0
-  - vulnerability: GHSA-2v4p-qf9q-27wj  # High
-    package: { name: google.golang.org/grpc, version: v1.82.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GHSA-hfg8-hc9c-6c3h  # High
-    package: { name: github.com/moby/go-archive, version: v0.2.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GHSA-hrxh-6v49-42gf  # High
-    package: { name: google.golang.org/grpc, version: v1.82.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GHSA-vp52-pcj8-j9qc  # High
-    package: { name: google.golang.org/grpc, version: v1.82.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4887  # High
-    package: { name: github.com/docker/docker, version: v28.5.2+incompatible }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4970  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-4970  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5026  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5026  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5037  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5942  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5942  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5970  # High
-    package: { name: golang.org/x/text, version: v0.38.0 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5972  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-5972  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6088  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6088  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6089  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6090  # High
-    package: { name: stdlib, version: go1.26.3 }
-    reason: "TODO: evaluate"
-  - vulnerability: GO-2026-6090  # High
-    package: { name: stdlib, version: go1.26.4 }
-    reason: "TODO: evaluate"
+  # Server or daemon side: the tools are CLI clients and run no server, gRPC service,
+  # container runtime or Docker daemon in CI.
+  - vulnerability: GHSA-2v4p-qf9q-27wj  # High: Server panic via missing authority or Host headers
+    #   google.golang.org/grpc in cosign
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GHSA-hrxh-6v49-42gf  # High: Vulnerabilities in the xDS RBAC authorization engine and...
+    #   google.golang.org/grpc in cosign
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GHSA-fqw6-gf59-qr4w  # High: containerd user ID handling bypass allows runAsNonRoot...
+    #   github.com/containerd/containerd in kube-linter
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GHSA-xhf5-7wjv-pqxp  # High: containerd CRI: image-config `LABEL` flows to...
+    #   github.com/containerd/containerd in kube-linter
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-5064  # Critical: containerd CRI checkpoint restore CDI annotation smuggling
+    #   github.com/containerd/containerd in kube-linter
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-5338  # Critical: containerd: CRI checkpoint import allows local image tag...
+    #   github.com/containerd/containerd in kube-linter
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-4887  # High: Moby has AuthZ plugin bypass when provided oversized...
+    #   github.com/docker/docker in docker-buildx,grype
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-6089  # High: Apply ReadHeaderTimeout when doing unencrypted HTTP/2 check
+    #   stdlib in cosign
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-6603  # High: HTTP/2 server memory exhaustion due to Trailer headers
+    #   golang.org/x/net,stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-6609  # High: Lack of limit on size of parsed Range headers
+    #   stdlib in docker-buildx
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-6612  # Critical: Double flow control refund on HTTP/2 server streams
+    #   golang.org/x/net,stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,syft,task
+    reason: "server or daemon side code; no server runs in CI"
+  - vulnerability: GO-2026-6613  # High: HTTP/1 server connection desynchronization after 2xx...
+    #   stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task,yq
+    reason: "server or daemon side code; no server runs in CI"
 
-  # k8s image: kubeconform v0.8.0
-  - vulnerability: GO-2026-5970  # High
-    package: { name: golang.org/x/text, version: v0.37.0 }
-    reason: "TODO: evaluate"
+  # Windows only: the images are Linux.
+  - vulnerability: GO-2026-4971  # High: Panic in Dial and LookupPort when handling NUL byte on...
+    #   stdlib in kube-linter
+    reason: "Windows only; the images are Linux"
+  - vulnerability: GO-2026-6604  # Critical: Root.Mkdir(All) can follow junctions out of the root on...
+    #   stdlib in cosign,docker-buildx,grype,syft
+    reason: "Windows only; the images are Linux"
+
+  # Denial of service from a malicious server, peer or input: needs a compromised registry,
+  # GitHub, DNS or proxy; the worst case is a CI job that hangs or crashes.
+  - vulnerability: GHSA-vp52-pcj8-j9qc  # High: Heap Memory Exhaustion (OOM) via HTTP/2 DATA Frame...
+    #   google.golang.org/grpc in cosign
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-4870  # High: Unauthenticated TLS 1.3 KeyUpdate record can cause...
+    #   stdlib in kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-4918  # High: Infinite loop in HTTP/2 transport when given bad...
+    #   stdlib in kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-4946  # High: Inefficient policy validation
+    #   stdlib in kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-4947  # High: Unexpected work during chain building
+    #   stdlib in kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-5037  # High: Inefficient candidate hostname parsing
+    #   stdlib in grype,kube-linter,kubeconform
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-4981  # High: Crash when handling long CNAME response
+    #   stdlib in kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-5942  # High: Parsing an invalid SVCB or HTTPS RR can panic
+    #   stdlib in cosign,grype,kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-5970  # High: Infinite loop on invalid input
+    #   golang.org/x/text in cosign,kube-linter,kubeconform
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-5972  # High: Enforce maximum recursion depth
+    #   stdlib in cosign,grype,kube-linter,kubeconform
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6088  # High: Add recursion depth guard during decode
+    #   stdlib in cosign,grype,kube-linter
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6090  # High: Limit handshake messages we are willing to accept...
+    #   stdlib in cosign,grype,kube-linter,kubeconform
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6605  # High: HTTP/1 client connection desynchronization after CONNECT...
+    #   stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6608  # High: Memory limit bypass when parsing MIME headers
+    #   stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6610  # High: HTTP/2 transport accepts malformed framing-related headers
+    #   golang.org/x/net,stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+  - vulnerability: GO-2026-6611  # High: Excessive CPU consumption from repeated initial window...
+    #   golang.org/x/net,stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "DoS from a malicious peer or input; worst case a failed CI job"
+
+  # Certificate and hostname checks: needs a CA with name constraints, ECH, or attacker-
+  # chosen hostnames; the tools talk to fixed public hosts (GHCR, GitHub, sigstore).
+  - vulnerability: GO-2026-4866  # High: Case-sensitive excludedSubtrees name constraints cause Auth...
+    #   stdlib in kube-linter
+    reason: "certificate or hostname check; tools talk to fixed public hosts"
+  - vulnerability: GO-2026-5026  # High: Invoking failure to reject ASCII-only Punycode-encoded...
+    #   golang.org/x/net,stdlib in cosign,grype,kube-linter,kubeconform
+    reason: "certificate or hostname check; tools talk to fixed public hosts"
+  - vulnerability: GO-2026-6607  # High: Reject malformed ECH outer extension references
+    #   stdlib in aqua,cosign,docker-buildx,grype,kube-linter,kubeconform,kustomize,syft,task
+    reason: "certificate or hostname check; tools talk to fixed public hosts"
+
+  # Writes outside a directory: needs an attacker-controlled archive or filesystem; the
+  # tools only handle our own builds, images and repo.
+  - vulnerability: GHSA-hfg8-hc9c-6c3h  # High: moby/go-archive: Crafted tar archive can write outside the...
+    #   github.com/moby/go-archive in docker-buildx
+    reason: "path escape; needs attacker-controlled archives or files"
+  - vulnerability: GHSA-m37j-52j7-pjw7  # High: Arbitrary file write outside file.Store root via...
+    #   oras.land/oras-go/v2 in kube-linter
+    reason: "path escape; needs attacker-controlled archives or files"
+  - vulnerability: GO-2026-4970  # High: Root escape via symlink plus trailing slash
+    #   stdlib in cosign,grype
+    reason: "path escape; needs attacker-controlled archives or files"

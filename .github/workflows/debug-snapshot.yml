@@ -1,0 +1,26 @@
+# Temporary: find out why the docker image snapshot gets a 400 with GITHUB_TOKEN. Do not merge.
+name: debug-snapshot
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write the docker snapshot
+        run: |
+          docker run --rm -e GITHUB_RUN_ID -e GITHUB_SHA -e GITHUB_REF \
+            ghcr.io/twanvanparidon/ci-runner/docker:1.3.0@sha256:232b42571cabac0bc690edacd2a00fb365ec11bfda61a784f4f6f60bf7a8a294 \
+            sh -c "syft registry:ghcr.io/twanvanparidon/ci-runner/docker:1.3.0 -q -o github-json \
+              | jq '.job = {correlator: \"debug-docker\", id: env.GITHUB_RUN_ID} | .sha = env.GITHUB_SHA | .ref = env.GITHUB_REF'" \
+            > docker.github.json
+          ls -l docker.github.json
+          jq '{job, sha, ref, manifests: (.manifests | length), packages: ([.manifests[].resolved | length] | add)}' docker.github.json
+      - name: Submit with GITHUB_TOKEN
+        run: gh api -i -X POST "repos/$GITHUB_REPOSITORY/dependency-graph/snapshots" --input docker.github.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

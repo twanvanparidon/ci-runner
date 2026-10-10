@@ -2,7 +2,7 @@
 # No daemon: point buildx at a builder (remote BuildKit, dind service or socket).
 
 ARG REGISTRY=ci-runner
-ARG BUILDER_VERSION=1.2.0
+ARG BUILDER_VERSION=1.2.1
 ARG GENERAL_VERSION=1.4.0
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
@@ -14,7 +14,7 @@ RUN aqua_bootstrap docker docker-cli-plugin-docker-buildx hadolint cosign syft g
  && mv /out/docker-cli-plugin-docker-buildx /plugins/docker-buildx
 
 FROM ${REGISTRY}/general:${GENERAL_VERSION}
-ARG VERSION=1.3.0
+ARG VERSION=1.3.1
 LABEL org.opencontainers.image.version=${VERSION}
 COPY --from=fetch /out/ /usr/local/bin/
 COPY --from=fetch /plugins/ /usr/local/lib/docker/cli-plugins/

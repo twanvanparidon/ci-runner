@@ -2,7 +2,7 @@
 # Scopes extend this image and add only what they need.
 
 ARG REGISTRY=ci-runner
-ARG BUILDER_VERSION=1.2.0
+ARG BUILDER_VERSION=1.2.1
 ARG ALPINE=alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
@@ -11,7 +11,7 @@ COPY aqua.yaml aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${ALPINE}
-ARG VERSION=1.4.0
+ARG VERSION=1.4.1
 LABEL org.opencontainers.image.version=${VERSION}
 RUN apk upgrade --no-cache \
  && apk add --no-cache ca-certificates git \

@@ -1,6 +1,8 @@
 # Validate kustomize manifests: render, schema check and lint what gets deployed.
-# Image: ci-runner k8s. Copy to .taskfiles/k8s/lint/Taskfile.yml, include as `k8s:lint`,
+# Image: ci-runner k8s (kustomize, yq, kubeconform, kube-linter).
+# Copy to .taskfiles/k8s/lint/Taskfile.yml, include as `k8s:lint`,
 # run `task k8s:lint` (all) or one step: k8s:lint:render, :schema, :kube-linter.
+# SOPS encrypted Secrets are fine: render drops their `sops:` metadata, like Flux does.
 # K8S_DIR (default k8s) holds the kustomizations, OUT (default rendered) the output.
 # Variables are per task: included Taskfiles share file-level vars.
 version: "3"
@@ -20,6 +22,7 @@ tasks:
       OUT: '{{.OUT | default "rendered"}}'
     cmds:
       - |
+        set -o pipefail # a failing kustomize build must not hide behind yq
         rm -rf "{{.OUT}}"
         count=0 failed=0
         list="$(mktemp)"
@@ -31,7 +34,8 @@ tasks:
           count=$((count + 1))
           target="{{.OUT}}/${dir#./}.yaml"
           mkdir -p "$(dirname "$target")"
-          if kustomize build "$dir" > "$target"; then echo "ok    $dir"; else echo "FAIL  $dir" >&2; failed=$((failed + 1)); fi
+          # del(.sops): SOPS metadata on encrypted Secrets, which Flux strips when decrypting.
+          if kustomize build "$dir" | yq 'del(.sops)' > "$target"; then echo "ok    $dir"; else echo "FAIL  $dir" >&2; failed=$((failed + 1)); fi
         done < "$list"
         rm -f "$list"
         [ "$count" -gt 0 ] || { echo "no kustomizations found under {{.K8S_DIR}}" >&2; exit 1; }

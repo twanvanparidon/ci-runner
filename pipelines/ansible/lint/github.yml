@@ -1,0 +1,40 @@
+# Lint Ansible playbooks and roles with ansible-lint. CI only, nothing runs against hosts.
+#
+# Copy to .github/workflows/ansible-lint.yml. Needs pipelines/ansible/lint/Taskfile.yml copied to
+# .taskfiles/ansible/lint/Taskfile.yml and included as `ansible:lint`.
+
+name: ansible-lint
+
+# Only when the code or the lint setup change. paths cannot read env: keep ansible/ in
+# sync with ANSIBLE_DIR.
+on:
+  pull_request:
+    paths:
+      - "ansible/**"
+      - "Taskfile.yml"
+      - ".taskfiles/ansible/lint/**"
+      - ".github/workflows/ansible-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ansible/**"
+      - "Taskfile.yml"
+      - ".taskfiles/ansible/lint/**"
+      - ".github/workflows/ansible-lint.yml"
+
+permissions:
+  contents: read
+
+env:
+  ANSIBLE_DIR: ansible
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/ansible:1.0.0
+      # Run as the hosted runner's user (owns the workspace) instead of root.
+      options: --user 1001:1001
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: task ansible:lint

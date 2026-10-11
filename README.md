@@ -13,8 +13,11 @@ Commonly used CI/CD pipelines plus hardened CI images.
 | `images/general/` | Hardened base runner: alpine, Task, jq, git, non-root |
 | `images/k8s/` | Kubernetes scope: kustomize, kube-linter, kubeconform, yq |
 | `images/docker/` | Docker scope: docker CLI, buildx, hadolint, cosign, syft, grype |
+| `images/tofu/` | OpenTofu scope: tofu, tflint, sops, age |
+| `images/packer/` | Packer scope: packer |
+| `images/ansible/` | Ansible scope: python, ansible-core, ansible-lint |
 | `images/_example/` | Template for a new image |
-| `pipelines/<scope>/<purpose>/` | Taskfile plus GitHub and GitLab examples to copy, e.g. `k8s/lint`, `k8s/gitops` |
+| `pipelines/<scope>/<purpose>/` | Taskfile plus GitHub and GitLab examples to copy, e.g. `k8s/lint`, `tofu/lint` |
 | `docs/` | Extra documentation |
 
 ## Usage

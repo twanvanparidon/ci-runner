@@ -16,6 +16,10 @@
   "github-actions": {
     managerFilePatterns: ["/^pipelines/.+/github\\.ya?ml$/"],
   },
+  // Top-level Python pins only; the glue workflow locks requirements.txt (task images:lock).
+  pip_requirements: {
+    managerFilePatterns: ["/^images/.+/requirements\\.in$/"],
+  },
   // FROM ${REGISTRY}/...:${..._VERSION} resolves to bogus Docker Hub images, and ARG ALPINE
   // is matched below; the custom managers cover every FROM in images/.
   dockerfile: {
@@ -64,6 +68,13 @@
       datasourceTemplate: "docker",
       versioningTemplate: "semver",
     },
+    {
+      // The uv image task images:lock runs to lock requirements.txt.
+      customType: "regex",
+      managerFilePatterns: ["/^\\.taskfiles/images/Taskfile\\.yml$/"],
+      matchStrings: ["UV: (?<depName>ghcr\\.io/astral-sh/uv):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"],
+      datasourceTemplate: "docker",
+    },
   ],
   packageRules: [
     {
@@ -86,6 +97,15 @@
     {
       matchFileNames: ["**/aqua.yaml"],
       groupName: "aqua",
+    },
+    {
+      // Python tools and the uv that locks them: one PR, one lock run.
+      matchManagers: ["pip_requirements"],
+      groupName: "python",
+    },
+    {
+      matchPackageNames: ["ghcr.io/astral-sh/uv"],
+      groupName: "python",
     },
     {
       // v0.120+ uses sigstore bundles; aqua-registry entry not updated yet (see images/docker/aqua.yaml).

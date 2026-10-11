@@ -1,0 +1,42 @@
+# Lint OpenTofu code: format check, tflint and validate. CI only, no plan or apply.
+#
+# Add to .gitlab-ci.yml. Needs pipelines/tofu/lint/Taskfile.yml copied to
+# .taskfiles/tofu/lint/Taskfile.yml and included as `tofu:lint`.
+
+variables:
+  TOFU_DIR: tofu
+  TOFU_IMAGE: ghcr.io/twanvanparidon/ci-runner/tofu:1.0.0
+
+stages:
+  - lint
+
+# MR pipelines for MRs, branch pipelines otherwise; never both.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.tofu:
+  stage: lint
+  image: $TOFU_IMAGE
+  # Only when the code or the lint setup change; keep tofu/ in sync with TOFU_DIR.
+  rules:
+    - changes:
+        - tofu/**/*
+        - Taskfile.yml
+        - .taskfiles/tofu/lint/**/*
+        - .gitlab-ci.yml
+
+tofu-fmt:
+  extends: .tofu
+  script: [task tofu:lint:fmt]
+
+tofu-tflint:
+  extends: .tofu
+  script: [task tofu:lint:tflint]
+
+tofu-validate:
+  extends: .tofu
+  script: [task tofu:lint:validate]

@@ -1,0 +1,49 @@
+{
+  "checksums": [
+    {
+      "id": "github_release/github.com/FiloSottile/age/v1.3.2/age-v1.3.2-linux-amd64.tar.gz",
+      "checksum": "CBE24006683F8EB669266162894B9A522A1AF52F2665FBC63A4BB032ED26AC10",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/FiloSottile/age/v1.3.2/age-v1.3.2-linux-arm64.tar.gz",
+      "checksum": "6B8DC4333C53A5A57C9E5834E3A48F92605D7154014CD07269FF3327DB5D37F4",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.13.3/sops-v3.13.3.linux.amd64",
+      "checksum": "E5BEC3346A873AE91D871550F3E698C1AAD962AFF462A080E40F25FDE17FEF6B",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/getsops/sops/v3.13.3/sops-v3.13.3.linux.arm64",
+      "checksum": "53B0ABACD38EF1B12A66D6C100956691B9CEFCE018D91F81E73DDF7438B94D77",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/opentofu/opentofu/v1.13.1/tofu_1.13.1_linux_amd64.tar.gz",
+      "checksum": "378ADA19D4BC70C43732004E8159BE771B23B9A5AFDF059E5F8A2B3FA2C70A69",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/opentofu/opentofu/v1.13.1/tofu_1.13.1_linux_arm64.tar.gz",
+      "checksum": "9C1EF375AA1852DB0B2888AA921B640C71F8140D4682AA4FEC99378A64FA7DC3",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.64.0/tflint_linux_amd64.zip",
+      "checksum": "CCA9D13E2E1D7A2C627AF60FF899A3C9B74212899416AEB96EC764D2EF954537",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/terraform-linters/tflint/v0.64.0/tflint_linux_arm64.zip",
+      "checksum": "560DA89AACF59389D4EB029730DD5B109B7288096C32F2726A0D9E783A5EA8EB",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.573.1/registry.yaml",
+      "checksum": "7F95A2779ECA5740BF20BA529680C6DC7CA280811334A819A2D7870F41BFEFC5",
+      "algorithm": "sha256"
+    }
+  ]
+}

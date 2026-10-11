@@ -1,0 +1,19 @@
+{
+  "checksums": [
+    {
+      "id": "http/releases.hashicorp.com/packer/1.16.1/packer_1.16.1_linux_amd64.zip",
+      "checksum": "AF38A9E93E4ED1B9CA68206AE969C64C300C82A3DDE46A780DFA629F0867F651",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "http/releases.hashicorp.com/packer/1.16.1/packer_1.16.1_linux_arm64.zip",
+      "checksum": "4784AC0B9228A61F3ECB3861DBF0BF9EBEAB6DDB0F5A10466126B8DAA5DB0DE5",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.573.1/registry.yaml",
+      "checksum": "7F95A2779ECA5740BF20BA529680C6DC7CA280811334A819A2D7870F41BFEFC5",
+      "algorithm": "sha256"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Lint Packer templates: format check and syntax validate. CI only, no builds.
+#
+# Copy to .github/workflows/packer-lint.yml. Needs pipelines/packer/lint/Taskfile.yml copied to
+# .taskfiles/packer/lint/Taskfile.yml and included as `packer:lint`.
+
+name: packer-lint
+
+# Only when the code or the lint setup change. paths cannot read env: keep packer/ in
+# sync with PACKER_DIR.
+on:
+  pull_request:
+    paths:
+      - "packer/**"
+      - "Taskfile.yml"
+      - ".taskfiles/packer/lint/**"
+      - ".github/workflows/packer-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "packer/**"
+      - "Taskfile.yml"
+      - ".taskfiles/packer/lint/**"
+      - ".github/workflows/packer-lint.yml"
+
+permissions:
+  contents: read
+
+env:
+  PACKER_DIR: packer
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/packer:1.0.0
+      # Run as the hosted runner's user (owns the workspace) instead of root.
+      options: --user 1001:1001
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: task packer:lint:fmt
+      - run: task packer:lint:validate

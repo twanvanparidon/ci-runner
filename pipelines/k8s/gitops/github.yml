@@ -16,7 +16,7 @@ jobs:
   set-image:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/twanvanparidon/ci-runner/k8s:1.4.1@sha256:9f25f8fff02f8d0c9146b10ec5d545bcd01c7899c259fc9b7114c4c91c8be7ca
+      image: ghcr.io/twanvanparidon/ci-runner/k8s:1.4.2@sha256:9028d7d0f7226dabb58ccf485eab00ce3a0e4274b7541abd55468f59b9a8b13c
       options: --user 1001:1001 # the runner user, owns the workspace
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

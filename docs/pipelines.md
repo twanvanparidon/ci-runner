@@ -8,6 +8,9 @@ Images ship tools and CI-only scripts (`ci_env`, `gitops_set_image`). Pipeline s
 | [`docker/build`](../pipelines/docker/build) | docker | `task docker:build IMAGE=<name:tag>` |
 | [`k8s/lint`](../pipelines/k8s/lint) | k8s | `task k8s:lint` (or `:render`, `:schema`, `:kube-linter`) |
 | [`k8s/gitops`](../pipelines/k8s/gitops) | k8s | `task k8s:gitops DIR=… OVERLAY=… IMAGES=…` |
+| [`tofu/lint`](../pipelines/tofu/lint) | tofu | `task tofu:lint` (or `:fmt`, `:tflint`, `:validate`) |
+| [`packer/lint`](../pipelines/packer/lint) | packer | `task packer:lint` (or `:fmt`, `:validate`) |
+| [`ansible/lint`](../pipelines/ansible/lint) | ansible | `task ansible:lint` |
 
 Each folder has a `Taskfile.yml` plus `github.yml` and `gitlab-ci.yml` examples.
 

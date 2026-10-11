@@ -9,15 +9,17 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   check:
-    desc: Fail if an image Dockerfile, aqua files, scripts or .dockerignore changed since BASE_REF but its version is already published
+    desc: Fail if an image Dockerfile, aqua files, requirements, scripts or .dockerignore changed since BASE_REF but its version is already published
     cmds:
       - for: { var: IMAGES }
         task: check:one
         vars: { FILE: "{{.ITEM}}" }
 
   lock:
-    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml, and the builder's AQUA_CHECKSUMS_SHA256 after editing AQUA_VERSION
+    desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml, requirements.txt after editing requirements.in, and the builder's AQUA_CHECKSUMS_SHA256 after editing AQUA_VERSION
     vars:
+      # Locks requirements.in for Python scopes; the command lands in the requirements.txt header.
+      UV: ghcr.io/astral-sh/uv:0.13.0-alpine@sha256:20d3fe1308ffa40b51c5c20e002bab5fece40585edcee8ec99357309e8363424
       BUILDER:
         sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/Dockerfile)"
     set: [pipefail]
@@ -34,6 +36,12 @@ tasks:
           [ -f "$d/aqua.yaml" ] || continue
           docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e AQUA_ROOT_DIR=/tmp/aqua \
             -v "{{.ROOT_DIR}}/$d:/work" {{.BUILDER}} aqua update-checksum -prune
+        done
+      - |
+        for d in $(for f in {{.IMAGES | trim}}; do dirname "$f"; done | sort -u); do
+          [ -f "$d/requirements.in" ] || continue
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{.ROOT_DIR}}/$d:/work" -w /work {{.UV}} \
+            uv pip compile --quiet --universal --generate-hashes --python-version 3.14 requirements.in -o requirements.txt
         done
 
   bump:
@@ -68,7 +76,7 @@ tasks:
     vars: *image
     cmds:
       - |
-        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/requirements* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
         if docker buildx imagetools inspect {{.REF}} > /dev/null 2>&1; then
           echo "{{.NAME}}: Dockerfile, aqua files, scripts or .dockerignore changed but {{.VERSION}} is already published; bump ARG VERSION"
           exit 1
@@ -79,7 +87,7 @@ tasks:
     vars: *image
     cmds:
       - |
-        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
+        git diff --quiet {{.BASE_REF}} -- {{.FILE}} {{.FILE | dir}}/aqua* {{.FILE | dir}}/requirements* {{.FILE | dir}}/scripts {{.FILE | dir}}/.dockerignore && exit 0
         [ "$(git show {{.BASE_REF}}:{{.FILE}} 2> /dev/null | sed -n 's/^ARG VERSION=//p')" = "{{.VERSION}}" ] || exit 0
         next=$(echo "{{.VERSION}}" | awk -F. '{ print $1 "." $2 "." $3 + 1 }')
         sed "s/^ARG VERSION=.*/ARG VERSION=$next/" {{.FILE}} > {{.FILE}}.tmp && mv {{.FILE}}.tmp {{.FILE}}

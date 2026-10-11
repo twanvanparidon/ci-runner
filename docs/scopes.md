@@ -11,4 +11,8 @@ A scope is an image in `images/<name>/`, plus its pipelines in `pipelines/<name>
 7. Fill in `images/<name>/README.md`.
 
 The build context is `images/<name>/`, allowlisted by its `.dockerignore` (aqua lock and scripts only).
-The version check watches the Dockerfile, aqua files, `scripts/` and `.dockerignore`; README changes need no bump.
+The version check watches the Dockerfile, aqua files, `requirements*`, `scripts/` and `.dockerignore`; README changes need no bump.
+
+## Python tools
+
+Tools that are Python packages (no aqua package) follow `images/ansible/`: Python from Alpine, top-level pins in `requirements.in`, and `task images:lock` writes a hash-locked `requirements.txt` that the Dockerfile installs into a venv. Allowlist `requirements.txt` in `.dockerignore`.

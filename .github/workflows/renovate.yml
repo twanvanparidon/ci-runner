@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 
-# Commits what Renovate cannot do on its own: the aqua lock files (task images:lock) and a
+# Commits what Renovate cannot do on its own: the aqua and Python lock files (task images:lock) and a
 # patch bump of every changed image (task images:bump), or images:check fails.
 # Pushes with RENOVATE_GLUE_TOKEN, since pushes with GITHUB_TOKEN trigger no workflows and
 # images.yml must run on the result. renovate.json5 lists the commit author in gitIgnoredAuthors.
@@ -46,5 +46,5 @@ jobs:
           git diff --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore(deps): lock aqua checksums and bump image versions"
+          git commit -am "chore(deps): lock dependencies and bump image versions"
           git push

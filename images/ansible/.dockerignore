@@ -1,0 +1,3 @@
+# Allowlist: only the Python lock reaches the build.
+*
+!requirements.txt

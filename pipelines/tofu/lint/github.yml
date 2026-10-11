@@ -1,0 +1,45 @@
+# Lint OpenTofu code: format check, tflint and validate. CI only, no plan or apply.
+#
+# Copy to .github/workflows/tofu-lint.yml. Needs pipelines/tofu/lint/Taskfile.yml copied to
+# .taskfiles/tofu/lint/Taskfile.yml and included as `tofu:lint`.
+
+name: tofu-lint
+
+# Only when the code or the lint setup change. paths cannot read env: keep tofu/ in
+# sync with TOFU_DIR.
+on:
+  pull_request:
+    paths:
+      - "tofu/**"
+      - "Taskfile.yml"
+      - ".taskfiles/tofu/lint/**"
+      - ".github/workflows/tofu-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tofu/**"
+      - "Taskfile.yml"
+      - ".taskfiles/tofu/lint/**"
+      - ".github/workflows/tofu-lint.yml"
+
+permissions:
+  contents: read
+
+env:
+  TOFU_DIR: tofu
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/twanvanparidon/ci-runner/tofu:1.0.0
+      # Run as the hosted runner's user (owns the workspace) instead of root.
+      options: --user 1001:1001
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: task tofu:lint:fmt
+      - run: task tofu:lint:tflint
+        env:
+          # tflint --init downloads plugins from GitHub; unauthenticated it hits rate limits.
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: task tofu:lint:validate

@@ -1,0 +1,38 @@
+# Lint Packer templates: format check and syntax validate. CI only, no builds.
+#
+# Add to .gitlab-ci.yml. Needs pipelines/packer/lint/Taskfile.yml copied to
+# .taskfiles/packer/lint/Taskfile.yml and included as `packer:lint`.
+
+variables:
+  PACKER_DIR: packer
+  PACKER_IMAGE: ghcr.io/twanvanparidon/ci-runner/packer:1.0.0
+
+stages:
+  - lint
+
+# MR pipelines for MRs, branch pipelines otherwise; never both.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+.packer:
+  stage: lint
+  image: $PACKER_IMAGE
+  # Only when the code or the lint setup change; keep packer/ in sync with PACKER_DIR.
+  rules:
+    - changes:
+        - packer/**/*
+        - Taskfile.yml
+        - .taskfiles/packer/lint/**/*
+        - .gitlab-ci.yml
+
+packer-fmt:
+  extends: .packer
+  script: [task packer:lint:fmt]
+
+packer-validate:
+  extends: .packer
+  script: [task packer:lint:validate]

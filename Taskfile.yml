@@ -19,18 +19,25 @@ vars:
     images/ansible/Dockerfile
   BASE_REF: origin/main
   # CHANGED_ONLY=true limits build, lint, sbom and scan to images whose Dockerfile, aqua
-  # files, requirements, scripts/ or .dockerignore changed since BASE_REF (CI). Shared files select all.
+  # files, requirements, scripts/ or .dockerignore changed since BASE_REF (CI). When only
+  # TASKS changed, general alone builds as a smoke test of the build tasks.
   CHANGED_ONLY: "false"
-  SHARED: Taskfile.yml .taskfiles .grype.yaml .hadolint.yaml .github/workflows/images.yml
+  TASKS: Taskfile.yml .taskfiles .github/workflows/images.yml
+  # BuildKit cache backend for build and release (gha in GitHub Actions); empty disables it.
+  CACHE: ""
   TARGETS:
     sh: |
       all="{{.IMAGES | trim}}"
-      if [ "{{.CHANGED_ONLY}}" != true ] \
-        || ! git cat-file -e "{{.BASE_REF}}^{commit}" 2> /dev/null \
-        || ! git diff --quiet "{{.BASE_REF}}" -- {{.SHARED}}; then
+      if [ "{{.CHANGED_ONLY}}" != true ] || ! git cat-file -e "{{.BASE_REF}}^{commit}" 2> /dev/null; then
         echo "$all"; exit 0
       fi
+      targets=
       for f in $all; do
         scope=$(dirname "$f")
-        git diff --quiet "{{.BASE_REF}}" -- "$f" "$scope"/aqua* "$scope"/requirements* "$scope/scripts" "$scope/.dockerignore" || echo "$f"
+        git diff --quiet "{{.BASE_REF}}" -- "$f" "$scope"/aqua* "$scope"/requirements* "$scope/scripts" "$scope/.dockerignore" \
+          || targets="$targets $f"
       done
+      if [ -z "$targets" ] && ! git diff --quiet "{{.BASE_REF}}" -- {{.TASKS}}; then
+        targets=images/general/Dockerfile
+      fi
+      echo $targets

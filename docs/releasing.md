@@ -8,7 +8,20 @@ Each image is versioned on its own via `ARG VERSION` in its Dockerfile.
 2. PR: `task images:check` fails if an image changed (Dockerfile, aqua files, `requirements*`, `scripts/`, `.dockerignore`) but its version is already published. `task security:scan` must pass.
 3. Merge to main: `task images:release` builds, pushes and signs every image whose version is missing from the registry. Published versions are never overwritten. A rerun finishes a release that stopped halfway (signs and tags an already pushed version).
 
-CI runs in this repo's own `docker` image, pinned to the last release, so a broken new release cannot break the pipeline that fixes it. CI only runs when image files change, and only builds, lints and scans the images whose Dockerfile, aqua files, `requirements*`, `scripts/` or `.dockerignore` changed (all images when shared files like Taskfiles or `.grype.yaml` change). Locally every task covers all images; add `CHANGED_ONLY=true` to narrow it.
+CI runs in this repo's own `docker` image, pinned to the last release, so a broken new release cannot break the pipeline that fixes it. Locally every task covers all images; add `CHANGED_ONLY=true` to narrow it.
+
+## What CI builds when
+
+CI only runs when image files, Taskfiles, `.grype.yaml`, `.hadolint.yaml` or `images.yml` change. It compares against the PR target (PR) or the previous commit (main):
+
+| Change | Builds and scans | Lints |
+|---|---|---|
+| An image's Dockerfile, aqua files, `requirements*`, `scripts/` or `.dockerignore` | that image | that image |
+| Only `Taskfile.yml`, `.taskfiles/` or `images.yml` | `general`, as a smoke test | `general` |
+| `.grype.yaml` | nothing; rescans the SBOMs attested on the published images | nothing |
+| `.hadolint.yaml` | nothing | all images |
+
+Builds run on buildx with a GitHub Actions cache scoped per image (`build-<image>` for the scan, `release-<image>` for the release), and each reads the other. So `aqua_bootstrap` is a cache hit while the aqua files are unchanged, and the release's amd64 build reuses the scan's layers. Set `CACHE=gha` to enable it; locally it stays off.
 
 ## Tags
 
@@ -24,7 +37,7 @@ Git tag `<image>/v<version>` marks the released commit.
 
 Images pin their dependencies exactly (`ARG BUILDER_VERSION`, `ARG GENERAL_VERSION`).
 Bumping `builder` or `general` means bumping the pin, which forces a version bump of the dependent image too.
-This can happen in two phases: bump `builder`, release, then move the pins. Until then the old pin is pulled from GHCR, so build with `REGISTRY=ghcr.io/twanvanparidon/ci-runner` (CI does).
+A pin may point at a version built in the same run: a container builder reads it from its OCI layout in `.oci/`, the local docker builder from the docker image store. Other pins are pulled from GHCR, so build with `REGISTRY=ghcr.io/twanvanparidon/ci-runner` (CI does).
 
 ## Renovate
 

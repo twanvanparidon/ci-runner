@@ -17,11 +17,21 @@ tasks:
         vars: { FILE: "{{.ITEM}}" }
 
   scan:
-    desc: Scan SBOMs whose packages differ from the published image, fail on FAIL_ON or worse
+    desc: Scan SBOMs whose packages differ from the published image, fail on FAIL_ON or worse; when .grype.yaml changed, also rescan the published SBOMs of the other images
     deps: [sbom]
+    vars:
+      RESCAN:
+        sh: |
+          git diff --quiet "{{.BASE_REF}}" -- .grype.yaml 2> /dev/null && exit 0
+          for f in {{.IMAGES | trim}}; do
+            case " {{.TARGETS | catLines}} " in *" $f "*) ;; *) echo "$f" ;; esac
+          done
     cmds:
       - for: { var: TARGETS }
         task: scan:one
+        vars: { FILE: "{{.ITEM}}" }
+      - for: { var: RESCAN }
+        task: scan:attested:one
         vars: { FILE: "{{.ITEM}}" }
 
   scan:published:
@@ -85,6 +95,16 @@ tasks:
         vars: { FILE: "{{.FILE}}" }
       - task: scan:one
         vars: { FILE: "{{.FILE}}", FULL: "true" }
+
+  scan:attested:one:
+    internal: true
+    vars: *image
+    cmds:
+      # The SBOM attested at release, so nothing is pulled; amd64 holds the same packages as arm64.
+      - |
+        docker buildx imagetools inspect {{.REF}} --format '{{"{{"}}json (index .SBOM "linux/amd64").SPDX{{"}}"}}' \
+          > sbom/{{.NAME}}.attested.spdx.json
+        grype -c "{{.ROOT_DIR}}/.grype.yaml" --fail-on {{.FAIL_ON}} sbom:sbom/{{.NAME}}.attested.spdx.json
 
   sbom:github:one:
     internal: true

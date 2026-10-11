@@ -3,11 +3,14 @@ version: "3"
 
 tasks:
   dockerfiles:
-    desc: Lint every image Dockerfile (or the changed ones) with hadolint
+    desc: Lint every image Dockerfile (or the changed ones, all when .hadolint.yaml changed) with hadolint
+    vars:
+      FILES:
+        sh: git diff --quiet "{{.BASE_REF}}" -- .hadolint.yaml 2> /dev/null && echo "{{.TARGETS | catLines}}" || echo "{{.IMAGES | trim}}"
     cmds:
       - |
         rc=0
-        for f in {{.TARGETS | catLines}}; do
+        for f in {{.FILES}}; do
           hadolint --no-color --config "{{.ROOT_DIR}}/.hadolint.yaml" "$f" || rc=1
         done
         exit $rc

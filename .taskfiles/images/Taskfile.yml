@@ -69,7 +69,24 @@ tasks:
       VERSION: { sh: "sed -n 's/^ARG VERSION=//p' {{.FILE}}" }
       REF: "{{.REGISTRY}}/{{.NAME}}:{{.VERSION}}"
     cmds:
-      - docker build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} {{.FILE | dir}}
+      # A container builder (CI) cannot see images loaded into docker, so a pin to an image built
+      # earlier in this run (images/<name>/Dockerfile, ARG <NAME>_VERSION) reads its OCI layout in .oci/<name>-<version>.
+      - |
+        args=
+        if ! docker buildx inspect | grep -q '^Driver: *docker$'; then
+          for pin in $(sed -n 's/^ARG \([A-Z]*\)_VERSION=\(.*\)/\1:\2/p' {{.FILE}}); do
+            name=$(echo "${pin%%:*}" | tr A-Z a-z) version=${pin#*:}
+            if [ -d ".oci/$name-$version" ]; then
+              args="$args --build-context {{.REGISTRY}}/$name:$version=oci-layout://.oci/$name-$version"
+            fi
+          done
+          if grep -qs "^ARG $(echo {{.NAME}} | tr a-z A-Z)_VERSION=" images/*/Dockerfile; then
+            args="$args --output type=oci,dest=.oci/{{.NAME}}-{{.VERSION}},tar=false"
+          fi
+        fi
+        docker buildx build -f {{.FILE}} --build-arg REGISTRY={{.REGISTRY}} -t {{.REF}} --load $args \
+          {{if .CACHE}}--cache-from type={{.CACHE}},scope=build-{{.NAME}} --cache-from type={{.CACHE}},scope=release-{{.NAME}} \
+          --cache-to type={{.CACHE}},scope=build-{{.NAME}},mode=max{{end}} {{.FILE | dir}}
 
   check:one:
     internal: true
@@ -116,6 +133,8 @@ tasks:
             -t {{.REGISTRY}}/{{.NAME}}:{{splitList "." .VERSION | first}} \
             -t {{.REGISTRY}}/{{.NAME}}:latest \
             -t "{{.REGISTRY}}/{{.NAME}}:sha-$(git rev-parse --short HEAD)" \
+            {{if .CACHE}}--cache-from type={{.CACHE}},scope=release-{{.NAME}} --cache-from type={{.CACHE}},scope=build-{{.NAME}} \
+            --cache-to type={{.CACHE}},scope=release-{{.NAME}},mode=max{{end}} \
             --metadata-file "$meta" --push {{.FILE | dir}}
           cosign sign --yes "{{.REGISTRY}}/{{.NAME}}@$(jq -r '."containerimage.digest"' "$meta")"
         fi

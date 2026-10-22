@@ -5,7 +5,7 @@ ARG REGISTRY=ci-runner
 ARG GENERAL_VERSION=1.4.1
 
 FROM ${REGISTRY}/general:${GENERAL_VERSION}
-ARG VERSION=1.0.0
+ARG VERSION=1.0.1
 LABEL org.opencontainers.image.version=${VERSION}
 USER 0:0
 COPY requirements.txt /tmp/

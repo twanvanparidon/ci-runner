@@ -19,7 +19,7 @@ tasks:
     desc: Regenerate aqua-checksums.json for every image directory after editing aqua.yaml, requirements.txt after editing requirements.in, and the builder's AQUA_CHECKSUMS_SHA256 after editing AQUA_VERSION
     vars:
       # Locks requirements.in for Python scopes; the command lands in the requirements.txt header.
-      UV: ghcr.io/astral-sh/uv:0.13.0-alpine@sha256:20d3fe1308ffa40b51c5c20e002bab5fece40585edcee8ec99357309e8363424
+      UV: ghcr.io/astral-sh/uv:0.13.5-alpine@sha256:6ba9c830aa848d21e1e9d8028ae01ed02b08980b25aeabef9a6683c5743c6d0f
       BUILDER:
         sh: echo "{{.REGISTRY}}/builder:$(sed -n 's/^ARG VERSION=//p' images/builder/Dockerfile)"
     set: [pipefail]

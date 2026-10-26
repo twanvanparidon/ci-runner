@@ -4,7 +4,7 @@
     "config:recommended",
     "helpers:pinGitHubActionDigests",
     // aqua.yaml packages and the aqua registry ref.
-    "github>aquaproj/aqua-renovate-config#2.13.0",
+    "github>aquaproj/aqua-renovate-config#2.14.0",
   ],
   timezone: "Europe/Amsterdam",
   // Weekly, right after the Sunday scan.

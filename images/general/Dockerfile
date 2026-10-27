@@ -3,7 +3,7 @@
 
 ARG REGISTRY=ci-runner
 ARG BUILDER_VERSION=1.2.1
-ARG ALPINE=alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+ARG ALPINE=alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
 
 FROM ${REGISTRY}/builder:${BUILDER_VERSION} AS fetch
 # scripts* is optional: a scope without scripts still builds.
@@ -11,7 +11,7 @@ COPY aqua.yaml aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${ALPINE}
-ARG VERSION=1.4.1
+ARG VERSION=1.4.2
 LABEL org.opencontainers.image.version=${VERSION}
 RUN apk upgrade --no-cache \
  && apk add --no-cache ca-certificates git \

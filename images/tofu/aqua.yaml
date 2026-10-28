@@ -1,7 +1,7 @@
 # Tools for the images in this directory. Lock with `task images:lock`.
 registries:
   - type: standard
-    ref: v4.573.1
+    ref: v4.579.0
 checksum:
   enabled: true
   require_checksum: true
@@ -9,7 +9,7 @@ checksum:
     - linux/amd64
     - linux/arm64
 packages:
-  - name: opentofu/opentofu@v1.13.1
-  - name: terraform-linters/tflint@v0.64.0
+  - name: opentofu/opentofu@v1.13.2
+  - name: terraform-linters/tflint@v0.65.0
   - name: getsops/sops@v3.13.3
   - name: FiloSottile/age@v1.3.2

@@ -423,7 +423,7 @@ platformdirs==4.14.0 \
     --hash=sha256:1dadfc59a8a5d7565b3d9270ae8fa71c065595352c4277b41c11ee6c222c4b91 \
     --hash=sha256:83f009c1e8c5fc36869b5171755b291887bd2cade7965233cdfabd23d754720b
     # via black
-pycparser==3.12; implementation_name != 'PyPy' \
+pycparser==3.12 ; implementation_name != 'PyPy' \
     --hash=sha256:a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e \
     --hash=sha256:f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6
     # via cffi

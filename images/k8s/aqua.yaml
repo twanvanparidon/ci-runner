@@ -1,7 +1,7 @@
 # Tools for the images in this directory. Lock with `task images:lock`.
 registries:
   - type: standard
-    ref: v4.573.1
+    ref: v4.583.0
 checksum:
   enabled: true
   require_checksum: true
@@ -11,5 +11,5 @@ checksum:
 packages:
   - name: kubernetes-sigs/kustomize@kustomize/v5.8.3
   - name: stackrox/kube-linter@v0.8.3
-  - name: mikefarah/yq@v4.54.1
+  - name: mikefarah/yq@v4.54.2
   - name: yannh/kubeconform@v0.8.0

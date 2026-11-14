@@ -50,9 +50,9 @@ black==26.10.1 \
     --hash=sha256:fe85fc4019bee59bc495c0f2a8ee76c5cd02c7015508d94a967ba2376f39a52c \
     --hash=sha256:ff57f63029aa1353fa8b1b0c8971fd88a6c92dc766608d2eee33ad2deb23270e
     # via ansible-lint
-bracex==3.0.1 \
-    --hash=sha256:4e38e32392e4a4780fe15d644bfc7c8514057cfc3861e060b11814ce829c25e4 \
-    --hash=sha256:6523ad83aeb5098a4ee597cff0f964442ff74e460bd3fafaffab6a013ff2288c
+bracex==3.2.3 \
+    --hash=sha256:8d6d677856121820d67b9009e76a5740fb02ab6dcd2d9815a83724d1888c305d \
+    --hash=sha256:8fbf92b4db3c31de999145e22a47d4ffdbefb983a98583c3272bd7d570f9a343
     # via wcmatch
 cffi==2.1.1 \
     --hash=sha256:046bfc24911b37851ee1b51aab8bffe713d89c68c6a057b09484ce9fd5f69b4e \
@@ -703,9 +703,9 @@ subprocess-tee==0.4.2 \
     # via
     #   ansible-compat
     #   ansible-lint
-wcmatch==11.1 \
-    --hash=sha256:2863afee97a7dd62e64f7feada864848c1a5e31cb331b3aa530fa1300d2d5d3c \
-    --hash=sha256:f2b6f0fad6f5e2571498723fcb3c8facdd0fba0dcc139f31d32f592eb648153e
+wcmatch==12.0.2 \
+    --hash=sha256:421209e3c220a3b3c7d6c6503277ef6cd3a0b28b35fc350539e4c088ac083b57 \
+    --hash=sha256:bf111865b4251d31d710fa2cad29d92769bea3bcc5bc59c2198fb13494b9270a
     # via ansible-lint
 yamllint==1.38.0 \
     --hash=sha256:09e5f29531daab93366bb061e76019d5e91691ef0a40328f04c927387d1d364d \

@@ -11,7 +11,7 @@ COPY aqua.yaml aqua-checksums.json scripts* /work/
 RUN aqua_bootstrap
 
 FROM ${ALPINE}
-ARG VERSION=1.4.1
+ARG VERSION=1.4.2
 LABEL org.opencontainers.image.version=${VERSION}
 RUN apk upgrade --no-cache \
  && apk add --no-cache ca-certificates git \

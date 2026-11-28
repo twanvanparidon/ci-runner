@@ -21,28 +21,28 @@
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/opentofu/opentofu/v1.13.1/tofu_1.13.1_linux_amd64.tar.gz",
-      "checksum": "378ADA19D4BC70C43732004E8159BE771B23B9A5AFDF059E5F8A2B3FA2C70A69",
+      "id": "github_release/github.com/opentofu/opentofu/v1.13.10/tofu_1.13.10_linux_amd64.tar.gz",
+      "checksum": "F606B6117EE03177374806D56D580BDE7B512AFF69F86D2B9F3148DCED4CA375",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/opentofu/opentofu/v1.13.1/tofu_1.13.1_linux_arm64.tar.gz",
-      "checksum": "9C1EF375AA1852DB0B2888AA921B640C71F8140D4682AA4FEC99378A64FA7DC3",
+      "id": "github_release/github.com/opentofu/opentofu/v1.13.10/tofu_1.13.10_linux_arm64.tar.gz",
+      "checksum": "9DCDABF93C5209FEAA35A7BB6D41F4D71B0880C4C4DFAF275D612F5B6FACC28A",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/terraform-linters/tflint/v0.64.0/tflint_linux_amd64.zip",
-      "checksum": "CCA9D13E2E1D7A2C627AF60FF899A3C9B74212899416AEB96EC764D2EF954537",
+      "id": "github_release/github.com/terraform-linters/tflint/v0.66.0/tflint_linux_amd64.zip",
+      "checksum": "22BE11CADC25CD02401E94C0CCC91AA63467DEBB8485C2A755D98F4C0A9D1E2E",
       "algorithm": "sha256"
     },
     {
-      "id": "github_release/github.com/terraform-linters/tflint/v0.64.0/tflint_linux_arm64.zip",
-      "checksum": "560DA89AACF59389D4EB029730DD5B109B7288096C32F2726A0D9E783A5EA8EB",
+      "id": "github_release/github.com/terraform-linters/tflint/v0.66.0/tflint_linux_arm64.zip",
+      "checksum": "1105A0A5DDEE7CDAC7957A3475571A946B839192EA1BC0C722C6C4686001067E",
       "algorithm": "sha256"
     },
     {
-      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.573.1/registry.yaml",
-      "checksum": "7F95A2779ECA5740BF20BA529680C6DC7CA280811334A819A2D7870F41BFEFC5",
+      "id": "registries/github_content/github.com/aquaproj/aqua-registry/v4.596.0/registry.yaml",
+      "checksum": "6BA12426C6B8A03CDF60963E23BD6782DC660B68DDF4CCCC072B3F973D0DC4B3",
       "algorithm": "sha256"
     }
   ]
